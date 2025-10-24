@@ -1,0 +1,34 @@
+/*
+CREATE USER faizan IDENTIFIED BY faizan;
+GRANT CONNECT, RESOURCE TO faizan;
+SELECT username FROM dba_users WHERE username='FAIZAN';
+*/
+
+//DDL
+CREATE TABLE WORKER(
+ID_Number NUMBER(8),
+Name CHAR(20),
+Role VARCHAR(8),
+Phone_Number NUMBER(13)
+);
+
+CREATE TABLE People(
+emp_id VARCHAR(12),
+"Date" DATE,
+Salary INTEGER 
+);
+
+/*
+DRL/DQL
+//select * from WORKER;
+select * from People;
+
+*/
+
+//DML
+
+ ALTER TABLE WORKER ADD GENDER VARCHAR2(8);
+ ALTER TABLE WORKER DROP COLUMN Phone_Number;
+ ALTER TABLE WORKER MODIFY ID_Number NUMBER(9); 
+    
+ //SELECT * FROM WORKER;
