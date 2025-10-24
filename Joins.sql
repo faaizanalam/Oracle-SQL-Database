@@ -73,3 +73,34 @@ SELECT E.FIRST_NAME, E.LAST_NAME, D.DEPARTMENT_ID, D.DEPARTMENT_NAME FROM Employ
 INNER JOIN departments D
 ON (E.DEPARTMENT_ID = D.DEPARTMENT_ID) AND (E.MANAGER_ID = D.MANAGER_ID);
 
+
+
+
+
+------------------------------------JOINS Practice---------------------------------------
+SELECT * FROM DEPARTMENTS;
+
+SELECT * FROM Employees
+NATURAL JOIN Departments;
+
+SELECT * FROM Departments
+Natural Join Employees;
+
+SELECT * FROM Employees
+NATURAL JOIN Departments
+WHERE Employee_id > 1;
+
+------------------------------SELF JOIN----------------------------------
+
+SELECT * FROM Employees E
+JOIN Employees T
+ON (T.EMPLOYEE_ID = E.EMPLOYEE_ID)
+WHERE E.COMMISSION_PCT IS NOT NULL;
+
+
+SELECT FIRST_NAME, LAST_NAME, DEPARTMENT_NAME FROM Employees 
+NATURAL JOIN DEPARTMENTS;
+
+SELECT S.FIRST_NAME, S.LAST_NAME, S.DEPARTMENT_ID FROM Employees S
+JOIN Employees T
+ON (S.Employee_id = T.Employee_id) AND (S.HIRE_DATE = T.HIRE_DATE);
