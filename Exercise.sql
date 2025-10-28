@@ -199,6 +199,32 @@ CREATE TABLE Persons (
 INSERT INTO products (product_name, category, price, stock_quantity)
 VALUES ('iPhone 14', 'Mobiles', 280000.00, 10);
 
-select * from products;
+select * from employees;
 
 --ALTER TABLE Production RENAME TO Products;
+
+create TABLE employees1 AS select * from employees;
+
+select * from employees1;
+
+insert into employees1(E_id,E_FIRST,E_LAST,E_AGE,E_GENDER,E_SALARY)
+values(8,'Nasir','Baig',18,'Male',90000);
+
+insert into employees1(E_id,E_FIRST,E_LAST,E_AGE,E_GENDER,E_SALARY)
+values(9,'Nasir','Baig',18,'Male',90000);
+
+
+insert into employees(E_id,E_FIRST,E_LAST,E_AGE,E_GENDER,E_SALARY)
+values(8,'Nasir','Baig',18,'Male',90000);
+
+insert into employees(e_id,E_FIRST,E_LAST,E_AGE,E_GENDER,E_SALARY)
+values(9,'Nasir','Baig',18,'Male',90000);
+
+
+
+select * from employees
+union 
+select * from employees1;
+
+
+
