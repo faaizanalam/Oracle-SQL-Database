@@ -276,7 +276,88 @@ VALUES('Anum', 'Iqbal', 30, 'Female', 51, 117, 71000, TO_DATE('27-08-2018', 'DD-
 SELECT * FROM EMPLOYEEES;
 
 
-------------------------------------UPDATING DATA-----------------------------------------
+------------------------------------UPDATING AND DELETING DATA-----------------------------------------
+UPDATE EMPLOYEEES
+SET Salary = Salary + 4000
+WHERE (Salary < 70000);
+
+
+DELETE FROM EMPLOYEEES
+WHERE (SALARY < 20000) AND (E_id > 2);
+
+------------------------------------MERGING DATA-------------------------------------------------------
+CREATE TABLE Employeees_updated AS
+(SELECT * FROM EMPLOYEEES);
+
+
+SELECT * FROM Employeees_updated;
+
+UPDATE Employeees_updated
+SET SALARY = SALARY + 5000, Age = Age + 2;
+
+
+MERGE INTO EMPLOYEEES T
+USING EMPLOYEEES_UPDATED S
+ON (S.E_id = T.E_id)
+
+WHEN MATCHED THEN
+UPDATE SET
+T.SALARY = S.SALARY
+
+WHEN NOT MATCHED THEN
+INSERT(E_first, E_Last, Age, Gender, dept_id, mgr_id, salary, joining_date, leaving_date)
+VALUES(S.E_first, S.E_Last, S.Age, S.Gender, S.dept_id, S.mgr_id, S.salary, S.joining_date, S.leaving_date); 
+
+
+-----------------------------------------JOINSSSSS-------------------------------------------
+----------------------------------------NATURAL JOIN-----------------------------------------
+SELECT * FROM EMPLOYEEES;
+SELECT * FROM DEPARTMEENTS;
+ALTER TABLE DEPARTMEENTS ADD COLUMN E_FIRST 
+SELECT * FROM MANAGEERS;
+
+SELECT E_ID, E_FIRST, E_LAST, GENDER, DEPT_ID, DEPT_NAME 
+FROM EMPLOYEEES 
+NATURAL JOIN DEPARTMEENTS
+WHERE GENDER = 'Female'
+ORDER BY E_First;
+
+SELECT E.E_ID, E.E_FIRST, E.E_LAST, E.GENDER, M.MGR_ID, M.MGR_FIRST, M.MGR_LAST FROM EMPLOYEEES E
+INNER JOIN MANAGEERS M
+ON (E.MGR_ID = M.MGR_ID);
+
+
+SELECT * FROM EMPLOYEEES S
+JOIN EMPLOYEEES T
+ON (S.E_ID = T.E_ID);
+WHERE ;
+
+----------------------------------------SET Operations--------------------------------------
+CREATE TABLE MANAGEERS_UPDATED AS (
+SELECT * FROM MANAGEERS
+WHERE MGR_ID > 110);
+
+UPDATE MANAGEERS_UPDATED2K   ------------------Increased Salary by 2000 for all rows.
+SET Salary = Salary + 2000;
+
+CREATE TABLE MANAGEERS_UPDATED2K AS
+(SELECT * FROM MANAGEERS_UPDATED);
+
+SELECT * FROM MANAGEERS
+UNION
+SELECT * FROM MANAGEERS_UPDATED;
+
+SELECT * FROM MANAGEERS_UPDATED2k
+UNION
+SELECT * FROM MANAGEERS;
+
+
+
+
+
+
+
+
 
 
 
