@@ -649,10 +649,66 @@ ON (M.mgr_id = E.mgr_id)
 ORDER BY M.dept_id ASC, M.mgr_first ASC;
 
 ------------------------------------------------Senario#-16------------------------------------------------------
+--Using EMPLOYEEES and MANAGEERS:
+--Display all people (by first + last name) who exist in both tables.
+--Display all employees who are not managers.
+--Display a combined list of all unique names from both.
+--(Use INTERSECT, EXCEPT, UNION — one query for each)
 
 
+SELECT E_first, E_last FROM EMPLOYEEES
+INTERSECT
+SELECT mgr_first, mgr_last FROM MANAGEERS;
 
+SELECT E_first, E_last FROM EMPLOYEEES
+MINUS
+SELECT mgr_first, mgr_last FROM MANAGEERS;
 
+SELECT E_first, E_last FROM EMPLOYEEES
+UNION
+SELECT mgr_first, mgr_last FROM MANAGEERS;
 
 ------------------------------------------------Senario#-17------------------------------------------------------
+--List all employees who either:
+--Are in dept_id 50 or 58 and earn > 70,000
+--OR are in dept_id 52 and have worked under a manager whose salary < 120,000
+--Use AND, OR, and NOT carefully to get correct filtering.
+
+SELECT * FROM EMPLOYEEES
+WHERE (dept_id IN (50,58) AND Salary > 70000)
+
+OR (dept_id = 52) AND 
+EXISTS(SELECT MANAGEERS.Mgr_id FROM MANAGEERS 
+WHERE Employeees.Mgr_id = MANAGEERS.Mgr_id AND MANAGEERS.Salary < 120000);
+
+----------
+------
+SELECT * FROM EMPLOYEEES
+WHERE dept_id < 50 OR EXISTS(
+SELECT mgr_id FROM MANAGEERS WHERE employeees.mgr_id = manageers.mgr_id AND manageers.mgr_first LIKE('A%'));
+
+SELECT * FROM MANAGEERS; --113,117, 108,122, 128
+------------------------------------------------Senario#-18------------------------------------------------------
+--Join EMPLOYEEES → MANAGEERS → DEPARTMENTS.
+--Display: Employee name, Manager name, Department name.
+--Show only those employees whose salary is less than 80% of their manager’s salary.
+SELECT 
+E_first || ' ' || E_last AS Employee_Name, 
+Mgr_first || ' ' || Mgr_last AS Manageer_Name,
+dept_name,
+E.SALARY, M.SALARY, M.SALARY * 0.8 AS MSALARY80
+FROM EMPLOYEEES E
+JOIN MANAGEERS M ON (E.Mgr_id = M.Mgr_id)
+JOIN DEPARTMEENTS D ON (E.dept_id = D.dept_id)
+WHERE E.SALARY < (M.SALARY*0.8);
+------------------------------------------------Senario#-19------------------------------------------------------
+
+
+------------------------------------------------Senario#-20------------------------------------------------------
+
+
+------------------------------------------------Senario#-21------------------------------------------------------
+
+
+
 
