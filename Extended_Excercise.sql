@@ -702,8 +702,25 @@ JOIN MANAGEERS M ON (E.Mgr_id = M.Mgr_id)
 JOIN DEPARTMEENTS D ON (E.dept_id = D.dept_id)
 WHERE E.SALARY < (M.SALARY*0.8);
 ------------------------------------------------Senario#-19------------------------------------------------------
+--Find all male employees working in departments between 50 and 55,
+--whose salary is either in (60000, 65000, 70000) or greater than 85000,
+--but who are not working under manager IDs 104 or 128.
+--Sort them by salary ascending and limit to the first 7 rows using OFFSET/FETCH.
+
+SELECT * FROM EMPLOYEEES 
+WHERE Gender = 'Male' 
+AND dept_id BETWEEN (50 AND 55) 
+AND ((Salary IN (60000, 65000, 70000) OR Salary > 85000)
+AND EXISTS (SELECT Mgr_id FROM MANAGEERS WHERE mgr_id NOT IN(104, 128)))
+ORDER BY SALARY ASC 
+FETCH FIRST 7 ROWS WITH TIES;
 
 
+SELECT * FROM EMPLOYEEES
+WHERE E_ID EXISTS(
+SELECT E_ID FROM PROJEECTS
+WHERE EMPLOYEEES.E_ID = PROJEECTS.E_ID;
+ 
 ------------------------------------------------Senario#-20------------------------------------------------------
 
 
@@ -711,4 +728,12 @@ WHERE E.SALARY < (M.SALARY*0.8);
 
 
 
+
+-----Aggregate Functions 
+SELECT (COUNT(E_last)) AS TotalRecords FROM EMPLOYEEES;
+
+
+
+
+commit;
 
