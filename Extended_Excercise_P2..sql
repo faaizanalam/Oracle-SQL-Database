@@ -159,24 +159,52 @@ SALARY < (SELECT AVG(SALARY) FROM MANAGEERS);
 --Department(s) with the highest number of employees
 --Use a subquery to find the max employee count,
 --then show dept_id(s) with that count.
-SELECT FROM DEPARTMEENTS
-WHERE dept_id IN  
-(SELECT dept_id FROM EMPLOYEEES
-GROUP BY dept_id
-having max(dept_id));
+SELECT dept_id, COUNT(dept_id) AS N_of_Emp FROM EMPLOYEEES
+GROUP BY dept_id;
+
+
+
+
+HAVING COUNT(dept_id) =   
+(SELECT MAX(COUNT(dept_id)) FROM EMPLOYEEES
+GROUP BY dept_id);
 
 ------------------------------------------------Senario#13-------------------------------------------------------
+--Managers earning above manager-average salary
+--Find managers whose salary is greater than the average salary of all managers.
+--Use a subquery — no joins.
 
-
+SELECT mgr_first || ' ' || mgr_last AS M_name, SALARY FROM MANAGEERS
+WHERE SALARY > (SELECT AVG(SALARY) FROM MANAGEERS);
 
 ------------------------------------------------Senario#14-------------------------------------------------------
+--Find departments where all employees are above age 30
+--Use GROUP BY and a HAVING condition on MIN(age).
+SELECT dept_id FROM EMPLOYEEES 
+GROUP BY dept_id
+HAVING MIN(AGE) = 28;
 
-
-
+SELECT * FROM EMPLOYEEES
+ORDEr BY dept_id;
 ------------------------------------------------Senario#15-------------------------------------------------------
+--Total budget vs average budget difference
+--For each department:
+--Show dept_id + (SUM(budget) − (overall AVG(budget) from subquery))
+--→ demonstrates aggregate inside SELECT subquery logic
 
+SELECT dept_id, sum(budget) - AVG(budget) AS Budget_Difference FROM PROJECTS
+GROUP BY dept_id;
 
-
-
+SELECT * FROM PROJECTS;
+SELECT DEPT_id, AVG(BUDGET) FROM PROJECTS
+GROUP BY DEPT_ID;
+SELECT DEPT_id, BUDGET FROM PROJECTS
+ORDER BY dept_id;
 ------------------------------------------------Senario#16-------------------------------------------------------
+--Top 3 (tied) highest cost projects
+--Show all projects whose budget is in the top 3 highest distinct budgets
+--using subqueries only
+--(no FETCH/TOP/ROWNUM)
+
+
 
