@@ -206,5 +206,7 @@ ORDER BY dept_id;
 --using subqueries only
 --(no FETCH/TOP/ROWNUM)
 
+commit;
+
 
 
