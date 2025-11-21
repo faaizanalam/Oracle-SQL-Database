@@ -469,3 +469,11 @@ ORDER BY SALARY
 OFFSET 5 ROWS
 FETCH FIRST 2 ROW ONLY;
 
+
+
+select * from dictionary
+where table_name Like('%ALL_USERS%');
+
+SELECT * FROM ALL_USERS;
+
+
