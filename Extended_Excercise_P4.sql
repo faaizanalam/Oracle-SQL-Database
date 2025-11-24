@@ -109,7 +109,7 @@ FROM EMPLOYEEES;
 --therefore decode does not return M for 'Male'. 
 
 SELECT * FROM EMPLOYEEES
-WHERE GENDER = 'Male';       -----On the other hand = operator return result based on comparision using equal.
+WHERE GENDER = 'Male';       -----On the other hand = operator returns results based on comparision using equal.
 
 SELECT * FROM EMPLOYEEES
 WHERE GENDER LIKE('Male');  ---Whereas LIKE Operator does not ignore trailing spaces, so does DECODE.
@@ -296,5 +296,263 @@ EXTRACT(YEAR FROM joining_date) AS J_year
 FROM EMPLOYEEES;
 
 ------------------------------------------------Senario#38-------------------------------------------------------
+--Show employees who joined within the last 90 days
+SELECT * FROM EMPLOYEEES
+WHERE joining_date >= SYSDATE - 90;
+
 ------------------------------------------------Senario#39-------------------------------------------------------
+--Show the weekday name of joining_date using TO_CHAR + date format.
+SELECT E_first, E_last, joining_date, TO_CHAR(NEXT_DAY(joining_date, 'Saturday'), 'FMDAY, dd-MON-YYYY') AS UP_weekend
+FROM EMPLOYEEES;
+
 ------------------------------------------------Senario#40-------------------------------------------------------
+--Display projects starting in the same month as today.
+SELECT p.*, SYSDATE FROM PROJECTS p
+WHERE (EXTRACT(MONTH FROM start_date) = EXTRACT(MONTH FROM SYSDATE));
+
+------------------------------------------------Senario#41-------------------------------------------------------
+--Calculate project duration in days.
+SELECT Proj_name, start_date , end_date, Round(NVL(end_date, SYSDATE) - start_date) AS days  FROM PROJECTS;
+
+------------------------------------------------Senario#42-------------------------------------------------------
+--Show employees hired in 2021 using EXTRACT(YEAR FROM …).
+SELECT * FROM EMPLOYEEES
+WHERE EXTRACT(YEAR FROM joining_date) = 2021;
+
+----------------------------------------------Advanced Senarios--------------------------------------------------
+------------------------------------------------Senario#43-------------------------------------------------------
+--ALTER TABLE EMPLOYEEES ADD Commission_pct NUMBER(8); 
+--UPDATE EMPLOYEEES 
+--SET Commission_pct = Salary * 0.10;
+SELECT * FROM EMPLOYEEES;
+
+--Write queries to:
+--Display employee name and salary in this format:
+--“$60,500.00 USD”
+--(use conversion + numeric + character functions)
+
+--Show salary category using CASE:
+--< 40k → Low
+--40k–80k → Medium
+--80k → High
+
+--Display commission as "No Commission" if NULL, else "Rs.<value>".
+
+SELECT E_first || ' ' || E_last AS E_name,
+TO_CHAR(SALARY, '$99,999,999.00') || ' USD' AS SALARY
+FROM EMPLOYEEES;
+
+SELECT E_first || ' ' || E_last AS E_name, SALARY, 
+CASE 
+WHEN SALARY < 40000 THEN 'Low'
+WHEN SALARY BETWEEN 40000 AND 80000 THEN 'Medium'
+WHEN SALARY > 80000 THEN 'High'
+ELSE 'Invalid'
+END
+FROM EMPLOYEEES;
+
+
+SELECT E_first || ' ' || E_last AS E_name,
+NVL(TO_CHAR(Commission_pct), 'No Commission')
+FROM EMPLOYEEES;
+
+------------------------------------------------Senario#44-------------------------------------------------------
+--Working With Dates
+--Using hire_date:
+--Show employee name and day of the week they were hired.
+--Display hire_date in this format:
+--"15-Jan-2022 (Saturday)"
+--
+--Calculate years of service, rounded down.
+--
+--Show "Old Employee" if > 10 years, else "New Employee".
+
+SELECT E_first, E_last, TO_CHAR(joining_date, 'DAY') AS DAY_JOined
+FROM EMPLOYEEES;
+
+SELECT E_first, E_last, ROUND(MONTHS_BETWEEN(NVL(leaving_date, Sysdate), joining_date)/12) AS service
+FROM EMPLOYEEES;
+
+--Show "Old Employee" if > 10 years, else "New Employee".
+SELECT E_first, E_last, ROUND(MONTHS_BETWEEN(NVL(leaving_date, Sysdate), joining_date)/12) AS service,
+CASE
+WHEN ROUND(MONTHS_BETWEEN(NVL(leaving_date, Sysdate), joining_date)/12) > 10 THEN 'Old Employee'
+ELSE 'New Employee'
+END
+FROM EMPLOYEEES;
+
+------------------------------------------------Senario#45-------------------------------------------------------
+--Manipulating Text
+--ALTER TABLE EMPLOYEEES
+--ADD  Email VARCHAR2(50);
+--
+--UPDATE EMPLOYEEES
+--SET Email = E_first || E_last || TO_CHAR(commission_pct) || '@honeybee.com'
+--UPDATE EMPLOYEEES
+--SET Email = lower(email);
+
+--For columns first_name, last_name, email:
+--Create a username:
+--first 3 letters of first_name + last 2 letters of last_name (all lowercase)
+--
+SELECT LOWER(SUBSTR(e_first, 1, 3) || SUBSTR(e_last, -2)) AS Username  
+FROM EMPLOYEEES;
+
+--Extract domain from email (everything after @).
+--
+SELECT E_first, email, SUBSTR(email, INSTR(Email, '@')) AS domain 
+FROM EMPLOYEEES;
+
+--Show email without any digits.
+
+--Show: "Name Length: <total characters>".
+SELECT E_FIRST || ' ' || E_last AS E_name,
+LENGTH( E_FIRST || ' ' || E_last) AS N_length,
+REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(Email, '0', '')
+, 1, ''), 2, ''), 3, ''), 4, ''), 5, ''), 6, ''), 7, ''), 8, ''), 9, '') AS D_Result
+FROM EMPLOYEEES;
+
+------------------------------------------------Senario#46-------------------------------------------------------
+--Numeric Tasks
+--Using columns salary, bonus, overtime_hours:
+--Increase salary by 12.5% and round to 2 decimals.
+SELECT E_first, SALARY + SALARY * 0.125  AS SALARY125 FROM EMPLOYEEES;
+
+--Calculate total earning: salary + NVL(bonus, 0) + (overtime_hours * 500).
+--Truncate salary to nearest thousand.
+SELECT E_first, E_last, TRUNC(SALARY) FROM EMPLOYEEES;
+
+--Display the absolute difference between salary and bonus.
+--Assuming we have a bonus column
+SELECT E_first, E_last, ABS(BONUS - SALARY) 
+FROM EMPLOYEEES;
+
+------------------------------------------------Senario#47-------------------------------------------------------
+--Conversion Tasks
+--Given a table with text_salary (VARCHAR) and text_date (VARCHAR):
+--Convert text_salary '60,500' into number.
+--Convert text_date '12-05-2021' into date.
+--Display both converted values in a single query.
+--Convert salary back into a VARCHAR with "PKR " prefix.
+
+--AS SALARY AND DATE are already in the specified format lets assume for now.
+SELECT TO_NUMBER('60,500', '9,999,999') FROM DUAL;
+
+SELECT TO_DATE('12-05-2021', 'dd-mm-yyyy') FROM DUAL;
+
+SELECT TO_NUMBER('60,500', '9,999,999'), TO_DATE('12-05-2021', 'dd-mm-yyyy') FROM DUAL;
+
+--Convert salary back into a VARCHAR with "PKR " prefix.
+SELECT CAST(60500 AS VARCHAR2(10)) FROM DUAL;
+
+------------------------------------------------Senario#48-------------------------------------------------------
+--CONDITIONAL Logic Challenges
+--For every employee:
+--If salary is NULL → show "Not Assigned", else show salary.
+SELECT E_first, NVL(TO_CHAR(SALARY), 'Not Assigned') FROM EMPLOYEEES;
+
+--If joining_date is in the current year → show "New Joiner".
+SELECT E_First, 
+CASE
+WHEN EXTRACT(YEAR FROM joining_date) =  EXTRACT(year from SYSDATE)
+THEN 'New Joiner'
+ELSE 'OTHER'
+END
+FROM EMPLOYEEES;
+
+SELECT E_FIRst, 
+DECODE(EXTRACT(YEAR FROM joining_date), EXTRACT(year from SYSDATE), 'New Joiner', 'Unknown')
+FROM EMPLOYEEES;
+
+--If gender = 'M' → "Mr." + name, else "Ms." + name.
+--USING CASE BECAUSE IT IGNORES TRAILING SPACES
+SELECT 
+CASE GENDER
+WHEN 'Male' THEN 'Mr.' || E_first
+WHEN 'Female' THEN 'Mrs.' || E_first
+ELSE 'Gender not specified'
+END
+FROM EMPLOYEEES;
+
+--If commission < 0 → force it to 0 using conditional functions.
+
+------------------------------------------------Senario#49-------------------------------------------------------
+--Date Arithmetic
+--Using start_date, end_date:
+--Show project duration in days.
+SELECT PROJ_name, Round((NVL(end_date, SYSDATE) - start_date)) AS Duration From Projects;
+
+--Show duration in months (rounded).
+SELECT Proj_name, ROUND(MONTHS_BETWEEN(NVL(end_date, SYSDATE), start_date)) AS duration FROM PROJECTS;
+
+--Add 45 days to start_date.
+SELECT Proj_Name, start_date + 45 FROM PRojects; 
+
+--Show "Expired" if end_date < SYSDATE else "Active".
+SELECT PROJ_NAME, 
+CASE 
+WHEN end_date < SYSDATE THEN 'Expired'
+ELSE 'Active'
+END
+AS STATUS FROM PROJECTS;
+
+------------------------------------------------Senario#50-------------------------------------------------------
+--Text Cleaning + Formatting
+--Given a column description:
+--Remove leading/trailing spaces.
+SELECT '    THIS IS A Column    ', TRIM('    THIS IS A Column    ') AS TRIMMED_TEXT FROM DUAL;
+--Convert multiple spaces between words to single space.
+SELECT 'This  is   a  text     , with  multiple  spaces   .', 
+REGEXP_REPLACE('This  is   a  text     , with  multiple  spaces   .',' {2,}',' ' ) 
+FROM DUAL;
+--Convert entire string to Proper Case (First letter uppercase).
+SELECT INITCAP('this is a string') FROM DUAL;
+--Extract first 10 characters and append "...".
+SELECT RPAD(SUBSTR('This is a String.', 1, 10), 13, '-') FROM DUAL;
+
+SELECT SUBSTR('This is a String.', 1, 10) || '---' FROM DUAL;
+
+------------------------------------------------Senario#51-------------------------------------------------------
+--Mixed-Type Challenge
+--Given:
+--employee_name, dept_code (like "D-15"), join_date.
+--Extract department number from dept_code using SUBSTR/INSTR.
+--Display the joining month name only.
+SELECT EXTRACT(MONTH FROM joining_date) AS joining_month FROM EMPLOYEEES;
+
+--Mask the employee name like:
+--"F**** A***"
+--(first letter only + * for rest)
+SELECT RPAD(SUBSTR(E_first, 1,1), length(E_first), '*')|| ' ' || RPAD(SUBSTR(E_last, 1,1), length(E_last), '*') AS NAME
+FROM EMPLOYEEES; 
+
+--Show:
+--"Joined X days ago"
+--(compute using SYSDATE - join_date)
+SELECT E_First || ' joined us ' || ROUND(SYSDATE - joining_date) || ' days ago' FROM EMPLOYEEES;
+
+------------------------------------------------Senario#52-------------------------------------------------------
+--NULL + Conversion + Character Mix
+--Given nullable columns address_line1, address_line2:
+--Create a full_address as:
+--"Line1, Line2"
+--but if line2 is NULL → only line1.
+-----#####----Assuming----
+SELECT 'Address  1' || NULL as Full_Address FROM DUAL;
+SELECT 'Address  1,' || ' Address 2' as Full_Address FROM DUAL;
+SELECT CONCAT('Address_1', 'Address_2') FROM DUAL;
+SELECT CONCAT('Address_1', Null) FROM DUAL;
+
+--Replace NULL with "N/A" in both lines.
+SELECT CONCAT('Address_1', NVL(NULL, ' N/A')) FROM DUAL;
+
+--Convert full_address to uppercase.
+SELECT UPPER(CONCAT('Address_1', NVL(NULL, ' N/A'))) FROM DUAL;
+
+--Show total address length.
+SELECT LENGTH(CONCAT('Address_1', NVL(NULL, ' N/A'))) AS LENGTH FROM DUAL;
+
+------------------------------------------------Senario#53-------------------------------------------------------
+------------------------------------------------Senario#54-------------------------------------------------------
+
+
