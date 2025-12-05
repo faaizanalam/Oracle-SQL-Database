@@ -458,24 +458,319 @@ GROUP BY Dept_id;
 SELECT * FROM PAYROLL;
 
 --Show average age per manager, only for managers with >2 employees.
-
+SELECT AVG(E_age), LISTAGG((E_first || ' ' || E_AGE), ',') AS MANAGERS FROM MANAGEEERS M
+INNER JOIN EMPLOYEEEES E
+ON M.Mgr_id = E.E_id
+WHERE E_dept IN (SELECT E_dept FROM EMPLOYEEEES
+GROUP BY E_dept
+HAVING COUNT(E_dept) > 2);
 
 --Show maximum salary in each department, including department name.
---Show count of employees per department and filter departments with count > 3.
+SELECT MAX(NET_SALARY), dept_name, LISTAGG(NET_SALARY, ', ') FROM EMPLOYEEEES E
+INNER JOIN PAYROLL P
+ON E.E_ID = P.E_ID
+LEFT JOIN DEPARTMEEENTS D
+ON D.dept_id = E.E_dept
+GROUP BY dept_name;
 
-------------------------------------------------Senario#6-------------------------------------------------------------
-------------------------------------------------Senario#7-------------------------------------------------------------
-------------------------------------------------Senario#8-------------------------------------------------------------
-------------------------------------------------Senario#9-------------------------------------------------------------
-------------------------------------------------Senario#10-------------------------------------------------------------
-------------------------------------------------Senario#11-------------------------------------------------------------
-------------------------------------------------Senario#13-------------------------------------------------------------
-------------------------------------------------Senario#14-------------------------------------------------------------
-------------------------------------------------Senario#15-------------------------------------------------------------
+--Show count of employees per department and filter departments with count > 3.
+SELECT COUNT(E_dept) AS Total_EMP, e_dept FROM EMPLOYEEEES E
+RIGHT JOIN DEPARTMEEENTS D
+ON E.E_dept = D.dept_id
+GROUP BY E_dept
+HAVING COUNT(E_DEPT) > 3;
+
+------------------------------------------------Subqueries-------------------------------------------------------------
+--Show employees with salary higher than the average salary of their department.
+SELECT * FROM EMPLOYEEEES
+WHERE E_ID IN (
+SELECT E_ID FROM PAYROLL
+WHERE NET_SALARY > (SELECT AVG(NET_SALARY) FROM PAYROLL))
+ORDER BY E_ID;
+--
+--OFFSET 5 ROWS
+--FETCH NEXT 5 ROWS ONLY;
+
+--List employees who report to the manager with the highest salary.
+SELECT * FROM EMPLOYEEEES E
+WHERE E_dept IN (
+SELECT dept_id FROM MANAGEEERS 
+WHERE mgr_id IN (
+SELECT E_ID FROM PAYROLL
+WHERE NET_SALARY = (
+SELECT MAX(NET_SALARY) FROM PAYROLL P
+INNER JOIN MANAGEEERS 
+ON mgr_id = E_id
+)));
+
+SELECT * FROM PAYROLL;
+SELECT * FROM EMPLOYEEEES;
+
+--Show departments without any projects.
+SELECT * FROM DEPARTMEEENTS
+WHERE dept_id NOT IN (
+SELECT dept_id FROM PROJEEEECTS);
+
+--Find employees whose salary is greater than at least 2 managers’ salaries.
+
+SELECT * FROM EMPLOYEEEES
+WHERE E_ID IN (
+SELECT E_id FROM PAYROLL
+WHERE NET_SALARY > (
+SELECT NET_SALARY FROM PAYROLL P
+INNER JOIN MANAGEEERS M 
+ON M.mgr_id = P.E_id)
+);
+
+------------------------------------------------Functions-------------------------------------------------------------
+--Use character functions to display employee names in UPPERCASE, lowercase, and initials.
+SELECT UPPER(E_first || ' ' || E_last) AS E_Upper,
+LOWER(E_first || ' ' || E_last) AS E_Lower,
+INITCAP(E_first || ' ' || E_last) AS E_Initial
+FROM EMPLOYEEEES;
+
+--Use numeric functions to calculate yearly_salary = ROUND(salary * 12, 2).
+SELECT E_first || ' ' || E_last E_name, TO_CHAR(ROUND(net_salary * 12, 2),'999,999,999') Yearly_salary FROM EMPLOYEEES E
+INNER JOIN PAYROLL P
+ON E.E_id = P.E_id;
+
+--Use date functions to calculate experience in years (SYSDATE - joining_date).
+SELECT E_first || ' ' || E_last E_name, TRUNC(MONTHS_BETWEEN(SYSDATE, E_joining)/12) Experiance
+FROM EMPLOYEEEES;
+
+--Handle NULL leaving_date using NVL/COALESCE.
+SELECT E_id, NVL(TO_CHAR(E_leaving), 'Active Employee') AS EMP_status FROM EMPLOYEEEES;
+
+SELECT E_id, NVL2(TO_CHAR(E_leaving),'Discontinued', 'Active Employee') AS EMP_status FROM EMPLOYEEEES;
+
+SELECT COALESCE(NULL, TO_CHAR(E_leaving), TO_CHAR(E_id), 'Active Employee') AS EMP_status FROM EMPLOYEEEES;
+
+--Use conditional CASE to categorize salaries into Low, Medium, High.
+SELECT E.*,
+CASE 
+WHEN NET_SALARY < 90000
+THEN 'Low'
+WHEN NET_SALARY BETWEEN 90000 AND 120000
+THEN 'Medium'
+WHEN NET_SALARY > 120000
+THEN 'High'
+ELSE 'Default'
+END AS SALARY_STATUS
+FROM PAYROLL P
+INNER JOIN EMPLOYEEEES E
+ON P.E_id = E.E_id;
+
+------------------------------------------------Set Operators-------------------------------------------------------------
+--Use UNION to list all employees and managers in a single list.
+--MANAGERS AND EMPLOYEEES ALREADY IN SAME TABLE!
+
+--Use INTERSECT to find employees who are also listed as project leaders.
+SELECT * FROM EMPLOYEEES
+INTERSECT;
+mgr_id,
+SELECT  dept_id FROM MANAGEEERS
+INTERSECT 
+
+SELECT dept_id FROM DEPARTMEEENTS
+INTERSECT
+SELECT dept_id FROM PROJEEEECTS;
+
+--Use MINUS/EXCEPT to find employees not assigned to any project.
+
+
+
+------------------------------------------------ORDER BY, OFFSET, FETCH-------------------------------------------------------------
+--Show top 5 highest-paid employees.
+SELECT E.*, NET_SALARY FROM EMPLOYEEEES E
+INNER JOIN PAYROLL P
+ON E.E_id = P.E_id
+ORDER BY NET_SALARY DESC
+FETCH FIRST 5 ROWS ONLY;
+
+--Show employees 6-10 by salary descending.
+SELECT E.*, NET_SALARY FROM EMPLOYEEEES E
+INNER JOIN PAYROLL P
+ON E.E_id = P.E_id
+ORDER BY NET_SALARY DESC
+OFFSET 6 ROWS
+FETCH FIRST 4 ROWS WITH TIES;
+
+
+--Order employees by department, then by joining_date.
+SELECT * FROM EMPLOYEEEES
+ORDER BY E_dept, E_joining;
+
+
+------------------------------------------------Indexes-------------------------------------------------------------
+--Create an index on EMPLOYEES.salary to speed up queries.
+CREATE INDEX idx_payrl_sal
+ON PAYROLL(NET_SALARY);
+
+
+--Create a composite index on (dept_id, joining_date).
+CREATE INDEX idx_empp_dept_jdate
+ON EMPLOYEEEES(E_dept, E_joining);
+
+--Create a function-based index for case-insensitive last name search.
+CREATE INDEX idx_empp_Lname
+ON EMPLOYEEEES(LOWER(E_last));  -- ---- -- -- -- LOWER() should be used in the query to use the index.
+
+------------------------------------------------Views-------------------------------------------------------------
+--Create a view showing employee name, department, salary, manager name. E.E_first || ' ' || E.E_last AS E_Name, dept_name, Net_salary, EM.E_first || ' ' || EM.E_last AS Manager_Name
+CREATE VIEW view_emppp AS
+SELECT * 
+FROM EMPLOYEEEES E
+LEFT JOIN DEPARTMEEENTS D
+ON E.E_dept = D.dept_id
+LEFT JOIN PAYROLL P
+ON P.E_id = E.E_id
+LEFT JOIN MANAGEEERS M
+ON M.dept_id = E.E_dept
+LEFT JOIN EMPLOYEEEES EM
+ON EM.E_Id = M.mgr_id;
+
+DROP VIEW view_emppp;
+SELECT * FROM view_emppp;
+
+SELECT * FROM DEPARTMEEENTS;
+
+--Create a view with calculated column: yearly_salary = salary * 12.
+CREATE VIEW view_payroll AS 
+SELECT E_ID, (NET_SALARY * 12) AS YEARLY_SALARY FROM PAYROLL;
+
+--Create a view that only shows employees earning > 70k with WITH CHECK OPTION.
+CREATE VIEW view_empp_salary AS 
+SELECT * FROM EMPLOYEEEES E
+WHERE EXISTS (SELECT * FROM PAYROLL P
+WHERE E.E_ID = P.E_id AND NET_SALARY > 70000)
+WITH CHECK OPTION;
+
+SELECT * FROM view_empp_salary;
+
+DROP VIEW view_empp_salary;
+
+SELECT E_ID FROM PAYROlL
+WHERE NET_SALARY > 70000;
+
+--Create a read-only view for managers to see payroll only.
+CREATE VIEW view_mgr_pyroll AS
+SELECT P.* FROM EMPLOYEEEES E
+INNER JOIN PAYROLL P
+ON E.E_id = P.E_id
+WITH READ ONLY;
+
+SELECT * FROM view_mgr_pyroll;
+
+------------------------------------------------Sequences-------------------------------------------------------------
+--Create a sequence for EMPLOYEES.emp_id starting at 1000.
+CREATE SEQUENCE seq_empp_e_id
+START WITH 1000;     -----increment by 1 by default
+
+CREATE TABLE demmmo(
+dum1 NUMBER);
+
+INSERT INTO demmmo (dum1)
+VALUES (seq_empp_e_id.NEXTVAL);
+
+SELECT * FROM demmmo;
+
+
+--Use NEXTVAL in insert statements for new employees.
+--Use NEXTVAL IN place of corresponding column in insert statement.
+
+--Create a formatted project ID using LPAD + sequence: PRJ_0001.
+INSERT INTO DEMO(dummy)
+VALUES('PRJ_' || LPAD(seq_empp_e_id.NEXTVAL, 4, '0'));
+
+--Demonstrate CURRVAL usage after inserting multiple rows.
+CREATE TABLE DEMMO(
+dummy VARCHAR2(45));
+
+INSERT INTO DEMMO(dummy)
+VALUES('PRJ_' || LPAD(TO_CHAR(seq_empp_e_id.NEXTVAL), 4, '0'));
+
+SELECT * FROM DEMMO;  --THE SEQUNCE STARTS FROM 7 BECUASE THIS IS THE POINT TO WHICH THE CURSOR IS POINTING NOW.
+
+------------------------------------------------SSynonyms-------------------------------------------------------------
+--Create a private synonym for PROJECTS and query through it.
+CREATE SYNONYM syn_projj
+FOR PROJEEEECTS;
+SELECT * FROM syn_projj;
+
+--Create a public synonym for EMPLOYEES.
+CREATE PUBLIC SYNONYM syn_empl
+FOR EMPLOYEEEES;
+
+--Create a synonym for a view and test SELECT statements.
+--CREATING SYNONYM FOR VIEW CREATED IN PREVIOUS SENARIOS.
+CREATE SYNONYM syn_view_mgr_pyroll
+FOR view_mgr_pyroll;
+
+SELECT * FROM syn_view_mgr_pyroll;
+
+--Test renaming underlying object and updating synonym.
+CREATE VIEW view_empSimple AS
+SELECT E_id FROM EMPLOYEEEES;
+
+CREATE OR REPLACE SYNONYM syn_empS
+FOR view_empSimple;
+
+SELECT * FROM syn_empS;
+
+RENAME view_empSimple TO view_empSRENAMED;
+
+SELECT * FROM syn_empS;
+
+CREATE OR REPLACE SYNONYM syn_empS
+FOR view_empSRENAMED;
+
+SELECT * FROM syn_empS;
+
+DROP VIEW view_empSimple;
+DROP VIEW view_empSRENAMED;
+
+--------------------------------------------Advanced Mixed Scenarios-------------------------------------------------------------
+--Create a view showing:
+--Employee full name
+--Department
+--Number of projects assigned
+--Average project budget
+--Index underlying tables to speed queries.
+CREATE VIEW view_adv_snr AS
+SELECT E_first || ' ' || E_last AS E_Name, Dept_name, 
+
+
+
+
+
+
+
+
+--Insert new employees using a sequence-generated emp_id, assign them to projects, then query top 3 employees by project budget via a view + synonym.
+
+--Trigger challenge:
+--Whenever salary is updated, insert into AUDIT_LOG (with sequence-generated audit_id).
+--Create a view for HR showing last 10 audits.
+--Use index on audit_date for faster retrieval.
+
+--Reporting challenge:
+--Show departments with avg salary > 75k, total employees, highest-paid employee name, total project budget — all in one query.
+
+--Cleanup challenge:
+--Drop a table used in a synonym
+--Observe the effect on the view and synonym
+--Recreate the table and restore full functionality.
+
+
+
 ------------------------------------------------Senario#16-------------------------------------------------------------
+
 ------------------------------------------------Senario#17-------------------------------------------------------------
+
 ------------------------------------------------Senario#18-------------------------------------------------------------
+
 ------------------------------------------------Senario#19-------------------------------------------------------------
+
 ------------------------------------------------Senario#20-------------------------------------------------------------
 
 
