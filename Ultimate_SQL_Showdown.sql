@@ -132,164 +132,359 @@ VALUES(9, 'Logistics','Quetta');
 INSERT INTO DEPARTMENTSS(dept_id, dept_name, location)
 VALUES(10, 'Procurement','Multan');
 
+SELECT * FROM DEPARTMENTSS;
 ----------------------------------------------------MANAGERS---------------------------------------------------------------
-INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
-VALUES(10000, );
 
 INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
 VALUES
-(10000, 'Zubair', 'Hassan', 1, 29, 'Male', 101,
- 'Gulberg Lahore', TO_DATE('2023-01-10','YYYY-MM-DD'), NULL),
+(10000, 'Zubair', 'Hassan', 1, 29, 'Male', 78000,
+TO_DATE('2023-01-10','YYYY-MM-DD'), NULL);
 
-(71, 'Hina', 'Khalid', 3216677885, 'hina.khalid@company.com', 27, 'Female', 102,
- 'DHA Karachi', TO_DATE('2022-05-18','YYYY-MM-DD'), NULL),
+INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
+VALUES(10001, 'Hina', 'Khalid', 2, 27, 'Female', 80000,
+TO_DATE('2022-05-18','YYYY-MM-DD'), NULL);
 
-(72, 'Osama', 'Rashid', 3457788124, 'osama.rashid@company.com', 31, 'Male', 103,
- 'F-11 Islamabad', TO_DATE('2021-09-25','YYYY-MM-DD'), NULL),
+INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
+VALUES(10002, 'Osama', 'Rashid', 3, 31, 'Male', 82000,
+TO_DATE('2021-09-25','YYYY-MM-DD'), NULL);
 
-(73, 'Ayesha', 'Nawaz', 3099988125, 'ayesha.nawaz@company.com', 28, 'Female', 104,
- 'Johar Town Lahore', TO_DATE('2023-03-12','YYYY-MM-DD'), NULL),
+INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
+VALUES(10003, 'Ayesha', 'Nawaz', 4, 28, 'Female', 100000,
+TO_DATE('2023-03-12','YYYY-MM-DD'), NULL);
 
-(74, 'Saad', 'Farhan', 3005566775, 'saad.farhan@company.com', 32, 'Male', 105,
- 'Askari 15 Lahore', TO_DATE('2020-08-05','YYYY-MM-DD'), NULL),
+INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
+VALUES(10004, 'Saad', 'Farhan', 5, 32, 'Male', 100500,
+TO_DATE('2020-08-05','YYYY-MM-DD'), NULL);
 
-(75, 'Komal', 'Shah', 3207788992, 'komal.shah@company.com', 26, 'Female', 106,
- 'Bahria Town Islamabad', TO_DATE('2023-07-01','YYYY-MM-DD'), NULL),
+INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
+VALUES(10005, 'Komal', 'Shah', 6, 26, 'Female', 106000,
+TO_DATE('2023-07-01','YYYY-MM-DD'), NULL);
 
-(76, 'Bilal', 'Raza', 3335566775, 'bilal.raza@company.com', 30, 'Male', 107,
- 'Gulshan Karachi', TO_DATE('2021-12-10','YYYY-MM-DD'), NULL),
+INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
+VALUES(10006, 'Bilal', 'Raza', 7, 30, 'Male', 100000,
+TO_DATE('2021-12-10','YYYY-MM-DD'), NULL);
 
-(77, 'Nimra', 'Aziz', 3457788993, 'nimra.aziz@company.com', 27, 'Female', 108,
- 'F-10 Islamabad', TO_DATE('2022-11-20','YYYY-MM-DD'), NULL),
+INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
+VALUES(10007, 'Nimra', 'Aziz', 8, 27, 'Female', 90000,
+TO_DATE('2022-11-20','YYYY-MM-DD'), NULL);
 
-(78, 'Tariq', 'Hameed', 3126677882, 'tariq.hameed@company.com', 33, 'Male', 109,
- 'Saddar Karachi', TO_DATE('2020-06-15','YYYY-MM-DD'), NULL),
+INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
+VALUES(10008, 'Tariq', 'Hameed', 9, 33, 'Male', 93000,
+TO_DATE('2020-06-15','YYYY-MM-DD'), NULL);
 
-(79, 'Sadia', 'Rauf', 3011122346, 'sadia.rauf@company.com', 28, 'Female', 110,
- 'PECHS Karachi', TO_DATE('2023-02-10','YYYY-MM-DD'), NULL);
+INSERT INTO MANAGERSS(MGR_ID, MGR_FIRST, MGR_LAST, DEPT_ID,AGE, GENDER,SALARY,JOINING_DATE,LEAVING_DATE)
+VALUES(10009, 'Sadia', 'Rauf', 10, 28, 'Female', 87000,
+TO_DATE('2023-02-10','YYYY-MM-DD'), NULL);
+
+SELECT * FROM  MANAGERSS;
+
+----------------------------------------------------EMPLOYEESS---------------------------------------------------------------
+
+SELECT * FROM EMPLOYEESS;
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Fatima', 'Khan', 32, 'Female', 1, 10000, 65000, TO_DATE('2019-06-10','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Usman', 'Shah', 41, 'Male', 2, 10001, 72000, TO_DATE('2018-01-20','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Ayesha', 'Malik', 27, 'Female', 3, 10002, 54000, TO_DATE('2022-09-05','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Zain', 'Raza', 35, 'Male', 4, 10003, 77000, TO_DATE('2020-02-18','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Hassan', 'Javed', 30, 'Male', 5, 10004, 60000, TO_DATE('2021-05-12','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Nimra', 'Saeed', 26, 'Female', 6, 10005, 52000, TO_DATE('2022-03-03','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Rehan', 'Iqbal', 38, 'Male', 7, 10006, 79000, TO_DATE('2017-08-27','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Maha', 'Aftab', 31, 'Female', 8, 10007, 68000, TO_DATE('2020-12-01','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Shahid', 'Rafiq', 44, 'Male', 9, 10008, 80000, TO_DATE('2015-09-10','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Hiba', 'Faisal', 24, 'Female', 10, 10009, 51000, TO_DATE('2023-04-20','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Saad', 'Qureshi', 29, 'Male', 8, 10001, 62000, TO_DATE('2021-06-25','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Farah', 'Naz', 36, 'Female', 7, 10002, 69000, TO_DATE('2018-02-16','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Talha', 'Akram', 33, 'Male', 6, 10003, 75000, TO_DATE('2019-10-12','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Mehwish', 'Hassan', 28, 'Female', 5, 10004, 56000, TO_DATE('2022-07-18','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Ali', 'Raza', 30, 'Male', 1, 10000, 67000, TO_DATE('2021-03-12','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Fatima', 'Shah', 27, 'Female', 2, 10001, 52000, TO_DATE('2020-06-25','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Usman', 'Iqbal', 32, 'Male', 3, 10002, 74000, TO_DATE('2019-09-10','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Ayesha', 'Khan', 29, 'Female', 4, 10003, 58000, TO_DATE('2022-01-15','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Zain', 'Ali', 34, 'Male', 5, 10004, 79000, TO_DATE('2018-05-20','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Hassan', 'Javed', 31, 'Male', 6, 10005, 64000, TO_DATE('2021-08-01','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Nimra', 'Saeed', 26, 'Female', 7, 10006, 51000, TO_DATE('2022-03-05','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Rehan', 'Iqbal', 38, 'Male', 8, 10007, 78000, TO_DATE('2017-10-12','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Maha', 'Aftab', 31, 'Female', 9, 10008, 69000, TO_DATE('2020-12-01','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Shahid', 'Rafiq', 44, 'Male', 10, 10009, 80000, TO_DATE('2015-09-10','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Hiba', 'Faisal', 24, 'Female', 1, 10000, 50000, TO_DATE('2023-04-20','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Saad', 'Qureshi', 29, 'Male', 2, 10001, 62000, TO_DATE('2021-06-25','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Farah', 'Naz', 36, 'Female', 3, 10002, 70000, TO_DATE('2018-02-16','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Talha', 'Akram', 33, 'Male', 4, 10003, 76000, TO_DATE('2019-10-12','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Laiba', 'Khalid', 28, 'Female', 5, 10004, 52000, TO_DATE('2022-07-18','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Furqan', 'Mehmood', 30, 'Male', 6, 10005, 64000, TO_DATE('2021-05-12','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Rabia', 'Sohail', 27, 'Female', 7, 10006, 57000, TO_DATE('2022-03-03','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Adeel', 'Haider', 35, 'Male', 8, 10007, 69000, TO_DATE('2018-02-10','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Maryam', 'Iqbal', 24, 'Female', 9, 10008, 53000, TO_DATE('2022-09-09','YYYY-MM-DD'), NULL);
+
+INSERT INTO EMPLOYEESS (EMP_ID, E_FIRST, E_LAST, GENDER, AGE, SALARY, DEPT_ID, JOINING_DATE, LEAVING_DATE)
+VALUES (seq_empl_e_id.NEXTVAL, 'Shoaib', 'Anjum', 34, 'Male', 2, 10008, 72600, '10-JAN-2018', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Nadia', 'Hassan', 29, 'Female', 1, 10002, 54000, '05-MAR-2020', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Irfan', 'Khan', 41, 'Male', 3, 10004, 85000,'12-NOV-2016', '25-JUL-2023');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Ayesha', 'Javed', 26, 'Female', 4, 10002, 48000, '22-AUG-2022', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Hamza', 'Raza', 'Male', 38, 2, 10001, 69000, '17-JUN-2017', '19-DEC-2021');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Mariam', 'Saeed', 'Female', 33, 1, 10007, 61000, '03-FEB-2019', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Bilal', 'Ahmed', 45, 'Male', 8, 10009, 90000, '09-SEP-2015', '15-MAR-2022');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Tania', 'Shah', 31, 'Female', 4, 10000, 58000, '11-OCT-2020', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Adnan', 'Yousaf', 36, 'Male', 2, 10003,73000, '14-JAN-2017', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Rabia', 'Imran', 27, 'Female', 1, 10005, 50000, '26-MAY-2021', '01-JUN-2024');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Shoaib', 'Akhtar', 34, 'Male', 2, 10003, 72000, '10-JAN-2018', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Nadia', 'Hassan', 29, 'Female', 1, 10005, 54000, '05-MAR-2020', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Irfan', 'Khan', 41, 'Male', 3, 10008, 85000, '12-NOV-2016', '25-JUL-2023');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Ayesha', 'Javed', 26, 'Female', 4, 10000, 48000, '22-AUG-2022', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Hamza', 'Raza', 38, 'Male', 2, 10003, 69000, '17-JUN-2017', '19-DEC-2021');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Sumaira', 'Iqbal', 32, 'Female', 6, 10000, 62000, '08-APR-2019', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Farhan', 'Mirza', 39, 'Male', 7, 10006, 78000, '15-AUG-2016', '30-JUN-2020');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Sadaf', 'Bibi', 28, 'Female', 3, 10008, 55000, '21-JAN-2021', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Danish', 'Malik', 35, 'Male', 5, 10006, 70000, '18-SEP-2017', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Rania', 'Aslam', 30, 'Female', 8, 10009, 59000, '13-MAR-2020', '01-JAN-2023');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Usman', 'Arif', 37, 'Male', 2, 10003, 75000, '10-JUL-2018', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Mehwish', 'Sultan', 34, 'Female', 1, 10005, 64000, '05-JAN-2019', '30-SEP-2023');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Kamran', 'Qureshi', 42, 'Male', 7, 10010, 88000, '12-MAY-2016', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Sania', 'Farooq', 29, 'Female', 4, 10000, 52000, '23-MAR-2021', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Arsalan', 'Mehmood', 33, 'Male', 6, 10001, 69000, '17-AUG-2019', '10-NOV-2022');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Iqra', 'Khalid', 27, 'Female', 3, 10008, 50000, '01-JUL-2022', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Hassan', 'Rafiq', 40, 'Male', 5, 10006, 82000, '09-NOV-2015', '15-FEB-2021');
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Zara', 'Rehman', 32, 'Female', 8, 10009, 63000, '14-APR-2019', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Talha', 'Sohail', 36, 'Male', 2, 10003, 71000, '27-OCT-2017', NULL);
+
+INSERT INTO EMPLOYEESS(EMP_ID, E_FIRST, E_LAST, AGE, GENDER, DEPT_ID, MGR_ID, SALARY, JOINING_DATE, LEAVING_DATE) VALUES
+(seq_empl_e_id.NEXTVAL, 'Nimra', 'Waheed', 30, 'Female', 1, 10005, 56000, '06-DEC-2020', '01-AUG-2024');
 
 
 
+----------------------------------------------------PROJECTS---------------------------------------------------------------
+DESC PROJECTSS;
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving)
-VALUES(1, 'Ali', 'Ahmad', 3001234567, 'ali.ahmad@company.com', 29, 'Male', 103,
- 'G-10 Islamabad', TO_DATE('2021-03-15','YYYY-MM-DD'), NULL);
+SELECT * FROM PROJECTSS;
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'HR Onboarding Automation', 1, '10-JAN-2021', '15-SEP-2021', 150000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Finance Audit System Upgrade', 2, '05-MAR-2020', '20-DEC-2020', 220000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Inventory Tracking Platform', 3, '12-NOV-2021', '05-AUG-2022', 185000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Website Redesign Initiative', 4, '18-MAY-2022', '30-OCT-2022', 90000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Manufacturing Line Upgrade', 5, '01-FEB-2021', '10-NOV-2021', 300000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Logistics Optimization Project', 6, '22-AUG-2020', '15-MAR-2021', 170000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Customer Support Portal', 7, '11-OCT-2019', '25-JUL-2020', 120000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'R&D Prototype Development', 8, '14-JAN-2022', '01-DEC-2022', 450000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Quality Control Automation', 9, '03-APR-2021', '21-NOV-2021', 200000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Corporate Social Responsibility Drive', 10, '09-AUG-2023', '30-JAN-2024', 80000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Internal Networking Upgrade', 4, '15-MAR-2022', '20-DEC-2022', 130000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Automated Attendance Monitoring System', 1, '01-JUL-2021', '05-APR-2022', 115000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Product Packaging Redesign', 5, '10-FEB-2020', '30-NOV-2020', 160000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Cloud Migration Project', 1, '05-JAN-2023', NULL, 250000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Employee Feedback Portal', 2, '15-FEB-2022', NULL, 90000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'AI Chatbot Development', 3, '12-MAR-2023', NULL, 320000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Mobile Payment Integration', 4, '08-APR-2023', NULL, 180000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Data Analytics Dashboard', 5, '20-MAY-2022', NULL, 210000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Website SEO Optimization', 6, '01-JUN-2023', NULL, 95000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Inventory Forecasting Tool', 7, '10-JUL-2022', NULL, 175000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Customer Loyalty Program', 8, '18-AUG-2023', NULL, 140000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'ERP System Enhancement', 9, '25-SEP-2022', NULL, 300000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Internal Security Audit', 10, '03-OCT-2023', NULL, 120000);
+
+INSERT INTO PROJECTSS(PROJ_ID, PROJ_NAME, DEPT_ID, START_DATE, END_DATE, BUDGET) VALUES 
+(seq_prj_pID.NEXTVAL, 'Supplier Integration System', 1, '12-NOV-2022', NULL, 160000);
 
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving)
-VALUES (2, 'Fatima', 'Khan', 3219876543, 'fatima.khan@company.com', 32, 'Female', 102,
- 'DHA Karachi', TO_DATE('2019-06-10','YYYY-MM-DD'), NULL);
+--------------------------------------------**********---------------------------------------------------------------
+--Assign employees to projects using EMPLOYEE_PROJECTS table. Include some employees in multiple projects.
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(3, 'Usman', 'Shah', 3339998887, 'usman.shah@company.com', 41, 'Male', 101,
- 'Model Town Lahore', TO_DATE('2018-01-20','YYYY-MM-DD'), NULL);
+DESC EMPLOYEESS;
+DESC PROJECTSS;
+DESC EMPLOYEE_PROJECTS;
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(4, 'Ayesha', 'Malik', 3457766554, 'ayesha.malik@company.com', 27, 'Female', 104,
- 'Hayatabad Peshawar', TO_DATE('2022-09-05','YYYY-MM-DD'), NULL);
+CREATE VIEW view_emp_proj_data_entry AS
+SELECT EMP_ID, P.PROJ_ID, 
+CASE
+WHEN P.BUDGET <100000 THEN 300
+WHEN P.BUDGET BETWEEN 100000 AND 149999 THEN 325
+WHEN P.BUDGET BETWEEN 150000 AND 250000 THEN 350
+WHEN P.BUDGET > 250000 THEN 400 
+END
+AS HOURS_ALLOCATED FROM EMPLOYEESS E
+INNER JOIN PROJECTSS P
+ON E.dept_id = P.dept_id
+WHERE E.joining_date <= P.start_date;
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(5, 'Zain', 'Raza', 3011239876, 'zain.raza@company.com', 35, 'Male', 103,
- 'F-11 Islamabad', TO_DATE('2020-02-18','YYYY-MM-DD'), NULL);
+---CREATED A VIEW ABOVE TO ENTER DATA IN TABLE "EMPLOYEE_PROJECTS".
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(6, 'Hassan', 'Javed', 3025566778, 'hassan.javed@company.com', 30, 'Male', 105,
- 'Johar Town Lahore', TO_DATE('2021-05-12','YYYY-MM-DD'), NULL);
+SELECT * FROM EMPLOYEESS;
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(7, 'Nimra', 'Saeed', 3207766554, 'nimra.saeed@company.com', 26, 'Female', 106,
- 'Clifton Karachi', TO_DATE('2022-03-03','YYYY-MM-DD'), NULL);
+INSERT INTO EMPLOYEE_PROJECTS(EMP_ID, PROJ_ID, HOURS_ALLOCATED)
+SELECT emp_id, proj_id, hours_allocated 
+FROM view_emp_proj_data_entry;
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(8, 'Rehan', 'Iqbal', 3359988776, 'rehan.iqbal@company.com', 38, 'Male', 107,
- 'G-9 Islamabad', TO_DATE('2017-08-27','YYYY-MM-DD'), NULL);
+SELECT * FROM view_emp_proj_data_entry;
+DROP VIEW view_emp_proj_data_entry;
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(9, 'Maha', 'Aftab', 3185566990, 'maha.aftab@company.com', 31, 'Female', 108,
- 'PWD Islamabad', TO_DATE('2020-12-01','YYYY-MM-DD'), NULL);
+DESC EMPLOYEE_PROJECTS;
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(10, 'Shahid', 'Rafiq', 3331112223, 'shahid.rafiq@company.com', 44, 'Male', 109,
- 'Sariab Road Quetta', TO_DATE('2015-09-10','YYYY-MM-DD'), NULL);
+SELECT * FROM EMPLOYEE_PROJECTS;
 
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(11, 'Hiba', 'Faisal', 3456677889, 'hiba.faisal@company.com', 24, 'Female', 110,
- 'Shah Rukn-e-Alam Multan', TO_DATE('2023-04-20','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(12, 'Saad', 'Qureshi', 3009988776, 'saad.qureshi@company.com', 29, 'Male', 108,
- 'F-8 Islamabad', TO_DATE('2021-06-25','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(13, 'Farah', 'Naz', 3018899776, 'farah.naz@company.com', 36, 'Female', 107,
- 'Bahria Town Islamabad', TO_DATE('2018-02-16','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(14, 'Talha', 'Akram', 3116677889, 'talha.akram@company.com', 33, 'Male', 106,
- 'North Nazimabad Karachi', TO_DATE('2019-10-12','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(e_id,e_first,e_last,E_number,E_email,E_age,e_gender,e_dept,e_address,e_joining,e_leaving) VALUES
-(15, 'Mehwish', 'Hassan', 3097788991, 'mehwish.hassan@company.com', 28, 'Female', 105,
- 'Askari 10 Lahore', TO_DATE('2022-07-18','YYYY-MM-DD'), NULL);
- 
- INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(16, 'Ali', 'Raza', 3001123456, 'ali.raza@company.com', 30, 'Male', 101, 'G-11 Islamabad', TO_DATE('2021-03-12','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(17, 'Fatima', 'Shah', 3001123457, 'fatima.shah@company.com', 27, 'Female', 102, 'DHA Karachi', TO_DATE('2020-06-25','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(18, 'Usman', 'Iqbal', 3001123458, 'usman.iqbal@company.com', 32, 'Male', 103, 'F-10 Islamabad', TO_DATE('2019-09-10','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(19, 'Ayesha', 'Khan', 3001123459, 'ayesha.khan@company.com', 29, 'Female', 104, 'Gulshan Karachi', TO_DATE('2022-01-15','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(20, 'Zain', 'Ali', 3001123460, 'zain.ali@company.com', 34, 'Male', 105, 'Johar Town Lahore', TO_DATE('2018-05-20','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(21, 'Hassan', 'Javed', 3001123461, 'hassan.javed@company.com', 31, 'Male', 106, 'Clifton Karachi', TO_DATE('2021-08-01','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(22, 'Nimra', 'Saeed', 3001123462, 'nimra.saeed@company.com', 26, 'Female', 107, 'G-9 Islamabad', TO_DATE('2022-03-05','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(23, 'Rehan', 'Iqbal', 3001123463, 'rehan.iqbal@company.com', 38, 'Male', 108, 'F-8 Islamabad', TO_DATE('2017-10-12','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(24, 'Maha', 'Aftab', 3001123464, 'maha.aftab@company.com', 31, 'Female', 109, 'PWD Islamabad', TO_DATE('2020-12-01','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(25, 'Shahid', 'Rafiq', 3001123465, 'shahid.rafiq@company.com', 44, 'Male', 110, 'Sariab Road Quetta', TO_DATE('2015-09-10','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(26, 'Hiba', 'Faisal', 3001123466, 'hiba.faisal@company.com', 24, 'Female', 101, 'Shah Rukn-e-Alam Multan', TO_DATE('2023-04-20','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(27, 'Saad', 'Qureshi', 3001123467, 'saad.qureshi@company.com', 29, 'Male', 102, 'F-8 Islamabad', TO_DATE('2021-06-25','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(28, 'Farah', 'Naz', 3001123468, 'farah.naz@company.com', 36, 'Female', 103, 'Bahria Town Islamabad', TO_DATE('2018-02-16','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(29, 'Talha', 'Akram', 3001123469, 'talha.akram@company.com', 33, 'Male', 104, 'North Nazimabad Karachi', TO_DATE('2019-10-12','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(30, 'Laiba', 'Khalid', 3001123470, 'laiba.khalid@company.com', 28, 'Female', 105, 'Askari 10 Lahore', TO_DATE('2022-07-18','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(31, 'Furqan', 'Mehmood', 3001123471, 'furqan.mehmood@company.com', 30, 'Male', 106, 'DHA Phase 6 Lahore', TO_DATE('2021-05-12','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(32, 'Rabia', 'Sohail', 3001123472, 'rabia.sohail@company.com', 27, 'Female', 107, 'Clifton Karachi', TO_DATE('2022-03-03','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(33, 'Adeel', 'Haider', 3001123473, 'adeel.haider@company.com', 35, 'Male', 108, 'Faisal Town Lahore', TO_DATE('2018-02-10','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(34, 'Maryam', 'Iqbal', 3001123474, 'maryam.iqbal@company.com', 24, 'Female', 109, 'Satellite Town Rawalpindi', TO_DATE('2022-09-09','YYYY-MM-DD'), NULL);
-
-INSERT INTO EMPLOYEEEES(E_ID, E_first, E_last, E_number, E_email, E_age, E_gender, E_dept, E_address, E_joining, E_leaving) VALUES
-(35, 'Taha', 'Rafique', 3001123475, 'taha.rafique@company.com', 29, 'Male', 110, 'DHA Phase 6 Lahore', TO_DATE('2020-06-14','YYYY-MM-DD'), NULL);
-
+----------------------------DATA INSERTED----------------------------------->>>>>>>>>>>>>>>>>>>
 
