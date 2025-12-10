@@ -486,5 +486,190 @@ DESC EMPLOYEE_PROJECTS;
 
 SELECT * FROM EMPLOYEE_PROJECTS;
 
-----------------------------DATA INSERTED----------------------------------->>>>>>>>>>>>>>>>>>>
+----------------------------DATA INSERTED----------->>>>>>>>>>>>>>>>>>>
+
+-----------------------------------------------------*******************------------------------------------------
+--Insert payroll records for employees using the payroll sequence.
+SELECT * FROM PAYROLLS;
+SELECT * FROM EMPLOYEESS;
+INSERT INTO PAYROLLS(PAYROLL_ID, EMP_ID, SALARY_PAID, PAY_DATE)
+VALUES(seq_pyroll_pyrll.NEXTVAL, );
+
+--Creating a View for this purpose
+
+CREATE VIEW view_pyroll_dataEntry AS
+SELECT EMP_ID, SALARY, JOINING_DATE, LEAVING_DATE FROM EMPLOYEESS;
+
+SELECT * FROM view_pyroll_dataEntry;
+
+UPDATE view_pyroll_dataEntry 
+SET JOINING_DATE = ADD_MONTHS(TRUNC(JOINING_DATE, 'MM'), -1);  ------CONVERTING ALL VIEW DATES TO First of next month for PAYROLL ENTRY
+
+
+MERGE INTO PAYROLLS P
+USING view_pyroll_dataEntry VP
+ON (P.EMP_ID = VP.EMP_ID)
+WHEN MATCHED THEN 
+UPDATE SET PAY_DATE = ADD_MONTHS(PAY_DATE, 1)
+WHERE P.PAY_DATE < VP.LEAVING_DATE
+
+WHEN NOT MATCHED THEN 
+INSERT(PAYROLL_ID, EMP_ID, SALARY_PAID, PAY_DATE)
+VALUES(seq_pyroll_pyrll.NEXTVAL, VP.EMP_ID, VP.SALARY, VP.JOINING_DATE);
+
+
+SELECT ADD_MONTHS(TRUNC(TO_DATE('22-JAN-2002', 'DD-MON-YYYY'), 'MM'), 1)FROM DUAL;
+
+
+---------------DATA INSERTED--------->>>>>>>>>>>>>>>>>>>>
+
+---------------------------------------------****-----------------------------------------------------
+--------Populate audit trail for salary updates for 5 employees.
+UPDATE EMPLOYEESS 
+SET E_first = 'Faizan' 
+WHERE EMP_ID = 100014;  -----------UPDATE 1
+
+UPDATE EMPLOYEESS
+SET AGE = 23
+WHERE EMP_ID = 100009;   ----------UPDATE 2
+
+UPADTE EMPLOYEESS 
+SET E_LAST = 'Malik'
+WHERE EMP_ID = 100039;  -----------UPDATE 3
+
+
+UPDATE EMPLOYEESS
+SET JOINING_DATE = JOINING_DATE + dept_id
+WHERE EMP_ID = 100001    ----------UPDATE 4
+
+UPDATE EMPLOYEESS
+SET JOINING_DATE = JOINING_DATE + dept_id   
+WHERE EMP_ID = 100008;   ----------UPDATE 5
+
+SELECT * FROM EMPLOYEESS;
+
+SELECT EXTRACT(DAY FROM DATE '2023-08-22') FROM DUAL;
+
+
+SELECT * FROM AUDIT_TRAIL;
+INSERT INTO AUDIT_TRAIL(AUDIT_ID, EMP_ID, ACTION)
+VALUES(seq_ATrail_aID.NEXTVAL, 100014, 'Changed employees first name to "Faizan"');
+
+INSERT INTO AUDIT_TRAIL(AUDIT_ID, EMP_ID, ACTION)
+VALUES(seq_ATrail_aID.NEXTVAL, 100009, 'Updated Employee Age to 23');
+
+INSERT INTO AUDIT_TRAIL(AUDIT_ID, EMP_ID, ACTION)
+VALUES(seq_ATrail_aID.NEXTVAL, 100039, 'Updated employees last name to "Malik"');
+
+INSERT INTO AUDIT_TRAIL(AUDIT_ID, EMP_ID, ACTION)
+VALUES(seq_ATrail_aID.NEXTVAL, 100001, 'Changed employees "Joining date" to "Joining date + dept_id"');
+
+INSERT INTO AUDIT_TRAIL(AUDIT_ID, EMP_ID, ACTION)
+VALUES(seq_ATrail_aID.NEXTVAL, 100008, 'Changed employees "Joining date" to "Joining date + dept_id"');
+
+
+SELECT * FROM EMPLOYEESS;
+
+SELECT * FROM AUDIT_TRAIL;
+
+--------------------------Task Complete----------->>>>>>>>>>>
+
+----------------------------------------Advanced Queries (Test joins, subqueries, operators, aggregates)-------------------------
+SELECT * FROM EMPLOYEESS;
+SELECT * FROM MANAGERSS;
+SELECT * FROM DEPARTMENTSS;
+SELECT * FROM PAYROLLS;
+SELECT * FROM PROJECTSS;
+SELECT * FROM EMPLOYEE_PROJECTS;
+SELECT * FROM AUDIT_TRAIL;
+
+--Display employee full name, dept_name, manager full name, and salary. 
+SELECT E_first || ' ' || E_last AS E_Name, D.DEPT_NAME, 
+Mgr_first || ' ' || mgr_last AS MGR_Name, E.SALARY FROM EMPLOYEESS E
+LEFT JOIN 
+DEPARTMENTSS D ON E.DEPT_ID = D.DEPT_ID
+LEFT JOIN 
+MANAGERSS M ON M.mgr_id = E.mgr_id
+;
+
+--Filter salary between 60k and 90k and employee + manager in same department.
+SELECT E.E_first || ' ' || E.E_last AS E_Name, 
+M.Mgr_first || ' ' || M.mgr_last AS MGR_Name, E.SALARY FROM EMPLOYEESS E
+LEFT JOIN 
+MANAGERSS M ON M.mgr_id = E.mgr_id
+WHERE (E.SALARY BETWEEN 60000 AND 90000) AND (E.dept_id = M.dept_id);
+
+----------------------Show departments with no employees.
+SELECT D.dept_id FROM DEPARTMENTSS D
+LEFT JOIN EMPLOYEESS E 
+ON D.dept_id = E.dept_id
+GROUP BY D.dept_id
+HAVING COUNT(E.dept_id) = 0;
+
+
+---------------------------List employees working on more than 2 projects.------------------------------------
+SELECT E.EMP_ID, COUNT(E.EMP_ID) FROM PROJECTSS P
+INNER JOIN EMPLOYEESS E
+ON P.dept_id = E.dept_id
+GROUP BY E.EMP_ID
+HAVING COUNT(E.EMP_ID) > 2
+;
+
+--Find employees whose salary is greater than the average salary of their department.
+SELECT * FROM EMPLOYEESS E
+WHERE SALARY > (
+SELECT AVG(SALARY) FROM EMPLOYEESS EV
+WHERE E.dept_id = EV.dept_id);
+
+SELECT * FROM EMPLOYEESS E
+JOIN MANAGERSS M ON E.mgr_id = M.mgr_id
+WHERE E.SALARY > (SELECT AVG(SALARY) FROM EMPLOYEESS);
+
+
+--Find employees reporting to the highest-paid manager.
+SELECT * FROM EMPLOYEESS 
+WHERE mgr_id IN (
+SELECT mgr_id FROM MANAGERSS
+WHERE SALARY = (SELECT MAX(SALARY) FROM MANAGERSS));
+
+
+--Show departments with avg salary > 65k and list the highest-paid employee in that department.
+SELECT MAX(E.SALARY) ,d.dept_id FROM DEPARTMENTSS D 
+INNER JOIN EMPLOYEESS E
+ON E.dept_id = D.dept_id
+GROUP BY d.dept_id   -------------
+HAVING AVG(E.SALARY) > 65000
+AND E.SALARY = MAX(E.SALARY)
+;
+
+SELECT MAX(SALARY) FROM EMPLOYEESS
+
+--Show employees with names starting with A or B, excluding those with salary < 50k.
+SELECT * FROM EMPLOYEESS
+WHERE E_First LIKE 'A%' OR E_First LIKE 'B%'
+AND SALARY >= 50000;
+
+
+--Show employees not assigned to any project.
+SELECT * FROM EMPLOYEESS E
+LEFT OUTER JOIN PROJECTSS P
+ON E.dept_id = P.dept_id
+WHERE PROJ_ID IS NULL;
+
+----------------------------------------------Functions & Calculations--------------------------------
+--Show employee full name in UPPERCASE, initials, and salary rounded to nearest 1000.
+
+
+
+
+Calculate years of experience using joining_date.
+
+Handle NULL leaving_date using NVL/COALESCE, displaying “Still Working” if null.
+
+Categorize salary into LOW (<60k), MEDIUM (60-90k), HIGH (>90k) using CASE.
+
+Format project codes using LPAD and sequence: PRJ_0001, PRJ_0002.
+
+
+
 
