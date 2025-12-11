@@ -880,12 +880,113 @@ FROM EMPLOYEESS E
 OFFSET 5 ROWS
 FETCH FIRST 5 ROWS ONLY;    
 
----------------------------------------------------------------------------------------
+------------------Show employees 6-10 by salary descending (OFFSET + FETCH).
+SELECT * FROM EMPLOYEESS
+ORDER BY SALARY DESC
+OFFSET 5 ROWS
+FETCH NEXT 4 ROWS ONLY;
 
---Show employees 6-10 by salary descending (OFFSET + FETCH).
+-----Show departments with total employees, total salary, highest-paid employee, total project budget in one query.
+SELECT D.dept_id, 
+COUNT(E.Emp_id) AS TOTAL_EMPLOYEESS,
+SUM(E.SALARY) AS TOTAL_SALARY, 
+MAX(E.SALARY)AS HIGHEST_SALARY_PAID, 
+SUM(P.BUDGET) AS TOTAL_BUDGET  
+FROM DEPARTMENTSS D
 
+LEFT JOIN EMPLOYEESS E
+ON D.dept_id = E.dept_id
+LEFT JOIN PROJECTSS P
+ON D.dept_id = P.dept_id
+GROUP BY D.dept_id;
 
+----Use subqueries to find employees whose salary is higher than at least 2 managers.
+SELECT * FROM EMPLOYEESS E
+WHERE (SELECT COUNT() FROM MANAGERSS M
+        WHERE E.SALARY > M.SALARY) >=2;
 
-Show departments with total employees, total salary, highest-paid employee, total project budget in one query.
+SELECT * FROM EMPLOYEESS EM
+WHERE (
+SELECT COUNT(M.MGR_ID) FROM MANAGERSS M 
+WHERE EM.SALARY > M.SALARY) >= 2;
 
-Use subqueries to find employees whose salary is higher than at least 2 managers.
+SELECT * FROM EMPLOYEESS
+WHERE SALARY > 80000;
+
+-------------------------------->>>>>>>>>>>>>>>>>>TASK COMPLETED
+---------------------------------------------Cleanup & Failure Testing-------------------------------------------------
+--------------------------------Drop a table used in a view and observe invalidations.
+CREATE TABLE DEMOO(
+DUMMY VARCHAR2(45)   -------CREATING A DUMMY TABLE
+);
+CREATE VIEW view_demoo AS 
+SELECT * FROM DEMOO;    ---------VIEW FOR DUMMY TABLE
+
+SELECT * FROM view_demoo;  -------ACCESSING THROUGH VIEW
+
+CREATE OR REPLACE SYNONYM syn_demoo
+FOR view_demoo ;             -------CREATING SYNONYM FOR THE VIEW
+
+SELECT * FROM syn_demoo;    --------ACCESSING VIEW THROUGH SYNONYM
+
+DROP TABLE DEMOO;  -------------DROPPING VIEW
+
+SELECT * FROM view_demoo; ---------------INACCESIBLE AFTER DROPPING TABLE  "HR.VIEW_DEMOO" has errors"
+SELECT * FROM syn_demoo;   ----------------NOT ACCESSIBLE "view "HR.VIEW_DEMOO" has errors"
+
+----------------------------Recreate the table and restore view & synonym functionality.
+CREATE TABLE DEMOO(
+DUMMY INT,
+DUM INT
+);
+SELECT * FROM DEMOO;
+SELECT * FROM view_demoo; 
+SELECT * FROM syn_demoo;
+
+--------3 THINGS: IF THE DROPPED TABLE IS RECREATED EXACTLY LIKE THE PREVIOUS, WE DONT NEED TO 
+-------------------RECREATE THE VIEW/SYNONYM...... BUT IF THE TABLE IS RECREATED WITH THE SAME NAME WITH SAME NUMBER OF COLUMN
+---------------------BUT DIFFERNT COLUMN NAME, THEN THE VIEW POINTS TO PREVIOUS VERSION OF THE TABLE IDK WHY..
+---------------------WHEN THE TABLE IS RECREATED WITH DIFFERENT NUMBER OF COLLUMNS WITH DIFFERNET NAMES THEN THE VIEW AND 
+---------------------SYNONYM SHOULD BE UPDATED...!
+CREATE TABLE DEMOO(
+DUMMY2 INT,
+DUM INT
+);
+SELECT * FROM DEMOO;
+SELECT * FROM view_demoo; 
+SELECT * FROM syn_demoo;
+
+---------------------------Test dropping a synonym and see the effect on dependent queries.
+------USING THE SYNONYM CREATED ABOVE....'syn_demoo'
+SELECT * FROM syn_demoo; ------DEPENDENT QUERY
+
+DROP SYNONYM syn_demoo;
+
+SELECT * FROM syn_demoo; ------QUERY RETURNS ERROR
+
+---------------------------------Simulate sequence reaching MAXVALUE and handle it.
+CREATE SEQUENCE seq_demoo
+START WITH 1
+MAXVALUE 3;
+
+INSERT INTO DEMOO(DUMMY2, DUM)               -----DEOS NOT EXECUTE MORE THAN 3 TIMES
+VALUES(seq_demoo.NEXTVAL, seq_demoo.NEXTVAL);
+
+-------------SOULTION#1 : ALTER/RECREATE THE SEQUENCE AND INCREASE MAXVALUE
+ALTER SEQUENCE seq_demoo
+MAXVALUE 50;
+
+INSERT INTO DEMOO(DUMMY2, DUM)               -----VALUES INSERTED
+VALUES(seq_demoo.NEXTVAL, seq_demoo.NEXTVAL);
+SELECT * FROM DEMOO;
+
+-------------SOLUTION#2 : ALTER SEQUENCE AND ENABLE CYCLE(VALUES REPEATATIONS), IF NO INTERGRITY CONSTRAINT EXIST IN TARGET TABLE
+ALTER SEQUENCE seq_demoo
+CYCLE;
+
+INSERT INTO DEMOO(DUMMY2, DUM)               -----SEQUENCE VALUES REPEAT AFTER MAX.
+VALUES(seq_demoo.NEXTVAL, seq_demoo.NEXTVAL);
+
+SELECT * FROM DEMOO;
+
+---------------------------------->>>>>>>>>>>ALL TASKS COMPLETED<<<<<<<<<<------------------------------
