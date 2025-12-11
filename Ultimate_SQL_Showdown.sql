@@ -634,13 +634,21 @@ WHERE SALARY = (SELECT MAX(SALARY) FROM MANAGERSS));
 
 
 --Show departments with avg salary > 65k and list the highest-paid employee in that department.
-SELECT MAX(E.SALARY) ,d.dept_id FROM DEPARTMENTSS D 
+SELECT d.dept_id FROM DEPARTMENTSS D 
 INNER JOIN EMPLOYEESS E
 ON E.dept_id = D.dept_id
 GROUP BY d.dept_id   -------------
 HAVING AVG(E.SALARY) > 65000
-AND E.SALARY = MAX(E.SALARY)
+--AND E.SALARY = MAX(E.SALARY)
 ;
+
+SELECT MAX()
+
+SELECT d.dept_id FROM DEPARTMENTSS D 
+INNER JOIN EMPLOYEESS E
+ON E.dept_id = D.dept_id
+GROUP BY d.dept_id   -------------
+HAVING AVG(E.SALARY) > 65000
 
 SELECT MAX(SALARY) FROM EMPLOYEESS
 
@@ -658,18 +666,226 @@ WHERE PROJ_ID IS NULL;
 
 ----------------------------------------------Functions & Calculations--------------------------------
 --Show employee full name in UPPERCASE, initials, and salary rounded to nearest 1000.
+SELECT E_first || ' ' || E_last AS E_name, 
+SUBSTR(E_First, 1,1) || ' AND ' || SUBSTR(E_last, 1,1) AS Initials,
+ROUND(SALARY, -3) AS Rounded_to_1000
+FROM EMPLOYEESS; 
+
+--Calculate years of experience using joining_date.
+SELECT 
+E_first || ' ' || E_last AS E_name,
+ROUND((SYSDATE - joining_date) / 365, 1 ) || ' Years' AS Experiance
+FROM EMPLOYEESS;
+
+--Handle NULL leaving_date using NVL/COALESCE, displaying “Still Working” if null.
+SELECT E.*,  NVL(TO_CHAR(leaving_date), 'Still Working')
+FROM EMPLOYEESS E;               -------------------------------NVL
+
+SELECT E.*,  NVL2(TO_CHAR(leaving_date), 'Left' , 'Still Working')
+FROM EMPLOYEESS E;               -------------------------------NVL2
+
+SELECT E.*,  COALESCE(TO_CHAR(leaving_date), 'Still Working')
+FROM EMPLOYEESS E;               ------------------------------COALESCE
+
+
+--Categorize salary into LOW (<60k), MEDIUM (60-90k), HIGH (>90k) using CASE.
+SELECT E.*,
+CASE 
+WHEN Salary < 60000 THEN 'LOW'
+WHEN Salary BETWEEN 60000 AND 90000 THEN 'MEDIUM'
+WHEN Salary > 90000 THEN 'HIGH'
+ELSE 'UNKNOWN'
+END AS Salary_GROUP
+FROM EMPLOYEESS E;
+
+
+--Format project codes using LPAD and sequence: PRJ_0001, PRJ_0002.
+SELECT 'PRJ_' || LPAD(Proj_id, 9, '0') FROM PROJECTSS;
+
+SELECT * FROM PROJECTSS;
+
+------------------------>>>>>>>>>>>>>>>>>>>>Task Completed...
+
+------------------------------------------------Aggregates, Grouping, HAVING-----------------------------
+--Count employees per department.
+SELECT d.dept_id, COUNT(d.dept_id) AS TOTAL_EMPLOYEES FROM EMPLOYEESS E
+INNER JOIN DEPARTMENTSS D
+ON D.dept_id = E.dept_id
+GROUP BY d.dept_id;
+
+--Show average salary per manager, but only for managers with more than 3 employees.
+SELECT M.mgr_id,COUNT(E.emp_id) AS T_Employeess,  AVG(M.SALARY) AS AVERAGE_SALARY FROM EMPLOYEESS E
+INNER JOIN MANAGERSS M
+ON M.dept_id = E.dept_id
+GROUP BY M.mgr_id
+HAVING COUNT(E.emp_id) > 3;
+
+--List total budget per department.
+SELECT D.dept_id, SUM(P.BUDGET) AS PROEJCT_BUDGET_SUM FROM PROJECTSS P
+INNER JOIN DEPARTMENTSS D
+ON P.dept_id = D.dept_id
+GROUP BY D.dept_id;
+
+--Use HAVING to filter departments with total project budget > 500k.
+SELECT D.dept_id FROM PROJECTSS P
+INNER JOIN DEPARTMENTSS D
+ON P.dept_id = D.dept_id
+GROUP BY  D.dept_id
+HAVING SUM(P.BUDGET) > 500000;
+
+-------------------------->>>>>>>>>>>>>>Task Completed...............
+
+-------------------------------------Views & Synonyms--------------------------------------------------
+--Create a view EMPLOYEE_OVERVIEW showing:
+--emp_id, full name, dept_name, manager name, salary, projects assigned (count), years of experience.
+
+CREATE VIEW EMPLOYEE_OVERVIEW AS 
+SELECT E.emp_id, 
+E.E_first || ' ' || E.E_last AS E_Name,
+D.dept_name,
+M.Mgr_first || ' ' || M.Mgr_last AS M_Name,
+E.SALARY AS EMPLOYEE_SALARY,
+NVL(COUNT(P.proj_id), 0) AS PROJECTS_ASSIGNED,
+ROUND((SYSDATE - E.Joining_date) / 365, 1) AS YEARS_OF_EXPERIANCE
+
+FROM EMPLOYEESS E
+LEFT JOIN DEPARTMENTSS D
+ON E.dept_id = D.dept_id
+LEFT JOIN MANAGERSS M
+ON E.mgr_id = M.mgr_id
+LEFT JOIN PROJECTSS P
+ON P.dept_id = E.dept_id
+
+GROUP BY E.emp_id, E.E_first, E.E_last, 
+M.Mgr_first, M.Mgr_last,
+E.SALARY,
+D.dept_name, E.joining_date;
+
+SELECT * FROM EMPLOYEE_OVERVIEW; ------VIEW_CREATED 
+
+
+----------Create a view DEPT_BUDGET_REPORT showing dept_id, dept_name, total_budget, avg_salary.
+CREATE VIEW DEPT_BUDGET_REPORT AS 
+SELECT D.dept_id, D.dept_name, SUM(BUDGET) AS BUDEGT, ROUND(AVG(SALARY)) AS AVERAGE_SALARY FROM DEPARTMENTSS D
+LEFT JOIN PROJECTSS P 
+ON D.dept_id = P.dept_id
+LEFT JOIN EMPLOYEESS E
+ON D.dept_id = E.dept_id
+GROUP BY D.dept_id, D.dept_name;
+
+SELECT * FROM DEPT_BUDGET_REPORT;
+
+
+------------------------Create a private synonym for EMPLOYEE_OVERVIEW.
+CREATE SYNONYM syn_EMPLOYEE_OVERVIEW
+FOR EMPLOYEE_OVERVIEW;
+
+SELECT * FROM syn_EMPLOYEE_OVERVIEW;
+
+------------------------Create a public synonym for DEPT_BUDGET_REPORT.
+CREATE OR REPLACE PUBLIC SYNONYM syn_DEPT_BUDGET_REPORT
+FOR DEPT_BUDGET_REPORT;
+
+SELECT * FROM syn_DEPT_BUDGET_REPORT;
+
+-----------------------Make EMPLOYEE_OVERVIEW updatable but hide salary column.
+CREATE OR REPLACE VIEW EMPLOYEE_OVERVIEW AS
+SELECT E.emp_id, 
+E.E_first || ' ' || E.E_last AS E_Name,
+D.dept_name,
+M.Mgr_first || ' ' || M.Mgr_last AS M_Name,
+--E.SALARY AS EMPLOYEE_SALARY,
+NVL(COUNT(P.proj_id), 0) AS PROJECTS_ASSIGNED,
+ROUND((SYSDATE - E.Joining_date) / 365, 1) AS YEARS_OF_EXPERIANCE
+
+FROM EMPLOYEESS E
+LEFT JOIN DEPARTMENTSS D
+ON E.dept_id = D.dept_id
+LEFT JOIN MANAGERSS M
+ON E.mgr_id = M.mgr_id
+LEFT JOIN PROJECTSS P
+ON P.dept_id = E.dept_id
+
+GROUP BY E.emp_id, E.E_first, E.E_last, 
+M.Mgr_first, M.Mgr_last,
+E.SALARY,
+D.dept_name, E.joining_date;
+
+
+------------Use WITH CHECK OPTION to restrict view to employees earning > 60k.
+CREATE OR REPLACE VIEW EMPLOYEE_OVERVIEW AS
+SELECT E.emp_id, 
+E.E_first || ' ' || E.E_last AS E_Name,
+D.dept_name,
+M.Mgr_first || ' ' || M.Mgr_last AS M_Name,
+--E.SALARY AS EMPLOYEE_SALARY,
+NVL(COUNT(P.proj_id), 0) AS PROJECTS_ASSIGNED,
+ROUND((SYSDATE - E.Joining_date) / 365, 1) AS YEARS_OF_EXPERIANCE
+
+FROM EMPLOYEESS E
+LEFT JOIN DEPARTMENTSS D
+ON E.dept_id = D.dept_id
+LEFT JOIN MANAGERSS M
+ON E.mgr_id = M.mgr_id
+LEFT JOIN PROJECTSS P
+ON P.dept_id = E.dept_id
+
+GROUP BY E.emp_id, E.E_first, E.E_last, 
+M.Mgr_first, M.Mgr_last,
+E.SALARY,
+D.dept_name, E.joining_date
+HAVING E.SALARY > 60000
+
+WITH CHECK OPTION;
+
+SELECT * FROM EMPLOYEE_OVERVIEW;
+
+--------------------------------->>>>>>>>>>>>>>>>>>>>>TASK COMPLETED
+
+-----------------------------------------------Indexing-------------------------------------------------
+------------Create an index on EMPLOYEES.salary.
+CREATE INDEX idx_emps_sal
+ON EMPLOYEESS(SALARY);
+
+
+------------Create a composite index on (dept_id, joining_date).
+CREATE INDEX idx_com_emp
+ON EMPLOYEESS(dept_id, joining_date);
+
+------------Create a function-based index for case-insensitive search on last_name.
+CREATE INDEX idx_func_lst
+ON EMPLOYEESS(UPPER(E_last));
+
+------------Create an index to speed up EMPLOYEE_PROJECTS.hours_allocated queries.
+CREATE INDEX idx_empProj_HrAlloc 
+ON EMPLOYEE_PROJECTS(HOURS_ALLOCATED);
+
+----------------------------------------->>>>>>>>>>>>>>>TASKS COMPLETED
+--------------------------------------------------Advanced Retrieval-----------------------------------------------
+--List top 5 highest-paid employees with department name and manager.
+SELECT * FROM EMPLOYEESS
+ORDER BY SALARY DESC
+FETCH FIRST 5 ROWS WITH TIES;
+
+--Show employees ranked by salary within each department (use RANK or DENSE_RANK).
+SELECT E.*, RANK() OVER(ORDER BY SALARY DESC) AS SALARY_RANK, 
+DENSE_RANK() OVER(ORDER BY SALARY DESC) AS DENSE_RANK
+FROM EMPLOYEESS E;
+
+
+SELECT E.*, RANK() OVER (ORDER BY SAlaRY DESC) AS RANK_SALARY, 
+DENSE_RANK() OVER (ORDER BY SAlaRY DESC) AS DENSE_RANK_SALARY,
+ROW_NUMBER() OVER(ORDER BY SALARY DESC) AS ROW_NUMBER
+FROM EMPLOYEESS E
+OFFSET 5 ROWS
+FETCH FIRST 5 ROWS ONLY;    
+
+---------------------------------------------------------------------------------------
+
+--Show employees 6-10 by salary descending (OFFSET + FETCH).
 
 
 
+Show departments with total employees, total salary, highest-paid employee, total project budget in one query.
 
-Calculate years of experience using joining_date.
-
-Handle NULL leaving_date using NVL/COALESCE, displaying “Still Working” if null.
-
-Categorize salary into LOW (<60k), MEDIUM (60-90k), HIGH (>90k) using CASE.
-
-Format project codes using LPAD and sequence: PRJ_0001, PRJ_0002.
-
-
-
-
+Use subqueries to find employees whose salary is higher than at least 2 managers.
