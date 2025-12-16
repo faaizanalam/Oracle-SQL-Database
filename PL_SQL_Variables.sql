@@ -72,6 +72,144 @@ END;
 
 
 
+---------------------------------------------------Variable Assignment------------------------------------------------
+DECLARE 
+    V_var_emp NUMBER;
+    V_var_const CONSTANT NUMBER(2) := 12;
+    V_var_first EMPLOYEESS.E_first%TYPE;
+    V_var_last VARCHAR2(35);
+    V_var_age INTEGER;
+    V_var_gen EMPLOYEESS.GENDER%TYPE;
+    V_var_dyn   DATE;
+    V_var_sec   VARCHAR2(40);
+    
+    
+BEGIN
+    V_var_emp := 34;
+    
+    SELECT E_first INTO V_var_first FROM EMPLOYEESS
+    WHERE SALARY = 73000; 
+    dbms_output.put_line('Values stored in V_var_first is : ' || V_var_first);
+    
+--    SELECT E_First INTO V_var_first FROM EMPLOYEESS  ----no data to return from this query
+--    WHERE SALARY = 900000;   
+--    ---You cannot assign a NULL value to a variable via a SELECT INTO statement in PL/SQL
+--    when no rows are returned by the query because the PL/SQL engine raises a NO_DATA_FOUND exception in that scenario. 
+--    The exception occurs because a SELECT INTO statement is designed to fetch a single row, 
+--    and a zero-row result set violates this fundamental expectation. 
+
+    V_var_first := NULL;   -----Assigning NULL is possible...
+    dbms_output.put_line('Values stored in V_var_first is : ' || V_var_first);
+    
+    SELECT EMP_ID, E_FIRST, E_LAST, AGE, GENDER INTO V_var_emp, V_var_first, V_var_last, V_var_age, V_var_gen FROM EMPLOYEESS
+    WHERE SALARY = 73000;  -->>> Assigning multiple values to multiple variables using a single select statement.
+    
+    dbms_output.put_line(' ');   -- Adds a newline.......
+    dbms_output.put_line(' ');
+    dbms_output.put_line('V alue stored in V_var_emp is : ' || V_var_emp);
+    dbms_output.put_line('Value stored in V_var_first is : ' || V_var_first);
+    dbms_output.put_line('Value stored in V_var_last is : ' || V_var_last);
+    dbms_output.put_line('Value stored in V_var_age is : ' || V_var_age);
+    dbms_output.put_line('Value stored in V_var_gen is : ' || V_var_gen);
+
+--    SELECT * FROM EMPLOYEESS 
+--    WHERE SALARY = 73000;   --=>>>>>>>>>>> GENERAL SQL SELECT STATEMENTS CANNOT BE USED INSIDE A PL/SQL BlOCK
+--                                              SELECT STATEMENTS SHOULD BE USED TO ASSIGN VALUES TO VARIABLES
+END;
+/
+
+SELECT * FROM EMPLOYEESS 
+WHERE SALARY =  900000;
+
+
+----------------------------------------------PRACTICLE TASKS---------------------------------------------
+--Use variables from "Variable Declartion" assignment.
+--Assign any updated value to all the variables except constant variables.
+--Add 2 months to the excisting v_birthday and assign it back to v_birthday.
+--Assign the name of the department and city having max_dept_id in the department table.
+--Assign the month and date of the exisiting value of v_birthday to v_num_days and v_num_months.
+
+
+DECLARE
+    v_num_days NUMBER;
+    v_num_months NUMBER DEFAULT 3;
+    v_birthday DATE NOT NULL DEFAULT DATE '2002-12-22';
+    v_pi_value CONSTANT NUMBER(3,2) DEFAULT 3.14;
+    V_dept_id CONSTANT DEPARTMENTSS.dept_id%TYPE DEFAULT 9;
+    V_dept_name DEPARTMENTSS.dept_name%TYPE;
+    V_dept_city DEPARTMENTSS.location%TYPE NOT NULL := 'Banglore';
+    V_const CONSTANT VARCHAR2(35) := 'HELLO';   ----CONSTANT VARIABLES MUST BE INTIALIZED AT DECLARATION INSTANCE.
+    
+BEGIN
+        ----------Assign any updated value to all the variables except constant variables.
+    v_num_days := 100;
+    SELECT ROUND((SYSDATE - joining_date)/30)  INTO v_num_months FROM EMPLOYEESS
+    WHERE SALARY = 57000;
+    dbms_output.put_line('The value stored in v_num_months is : ' || v_num_months);
+    
+    --SELECT dept_id INTO V_dept_id FROM EMPLOYEESS WHERE SALARY = 57000;   --CONSTANT, value can't be changed
+    dbms_output.put_line('The value stored in V_dept_id is : ' || V_dept_id);
+    
+    SELECT dept_name INTO V_dept_name FROM DEPARTMENTSS WHERE dept_id = 7;
+    dbms_output.put_line('The value stored in V_dept_name is : ' || V_dept_name);
+    
+    SELECT LOCATION INTO V_DEpt_City FROM DEPARTMENTSS   ---Variable names in PL/SQL are CASE INSENSITIVE
+    WHERE dept_id = 7;
+    dbms_output.put_line('The value stored in V_dept_City is : ' || V_dept_City);
+    
+    --Add 2 months to the excisting v_birthday and assign it back to v_birthday.
+    v_birthday := ADD_MONTHS(v_birthday, 2);
+    dbms_output.put_line('The value stored in v_birthday is : ' || v_birthday);
+    
+    --Assign the name of the department and city having max_dept_id in the department table.
+    SELECT dept_name, location INTO V_dept_name, V_dept_City FROM DEPARTMENTSS 
+    WHERE dept_id = (SELECT max(dept_id) FROM DEPARTMENTSS);
+    dbms_output.put_line('The value stored in V_dept_name is : ' || V_dept_name || ' AND '
+    || 'V_dept_City stores : ' || V_dept_City);
+
+    --Assign the month and date of the exisiting value of v_birthday to v_num_days and v_num_months.
+    v_num_days := EXTRACT(DAY FROM v_birthday);
+    v_num_months := EXTRACT(MONTH FROM v_birthday);
+    
+    dbms_output.put_line('Updated value of v_num_days is : ' || v_num_days);
+    dbms_output.put_line('Updated value of v_num_months is : ' || v_num_months);
+    
+END;
+/
+
+SELECT * FROM EMPLOYEESS;
+
+SELECT * FROM DEPARTMENTSS;
+
+
+
+---------------------------------------------------WORKING WITH VARIABLES-------------------------------------------
+DECLARE
+    v_var_spl NUMBER;
+    v_var_bckup NUMBER;
+    v_var_max NUMBER;
+    v_var_count NUMBER;
+    v_var_empid NUMBER;
+    v_var_emp_name NUMBER;
+    
+BEGIN
+    SELECT max(SALARY) INTO v_var_spl FROM EMPLOYEESS;
+    dbms_output.put_line('Value stored in variable v_var_spl is : ' || v_var_spl);
+    
+    SELECT EMP_id INTO v_var_bckup FROM EMPLOYEESS WHERE SALARY = v_var_spl;
+    dbms_output.put_line('Value stored in variable v_var_bckup is : ' || v_var_bckup);
+    
+    SELECT MAX(SALARY) INTO v_var_max FROM EMPLOYEESS WHERE EMP_ID < v_var_bckup;
+    dbms_output.put_line('Value stored in variable v_var_max is : ' || v_var_max);
+    
+    SELECT COUNT(*) INTO v_var_count FROM EMPLOYEESS WHERE SALARY < v_var_spl;
+    dbms_output.put_line('Value stored in variable v_var_count is : ' || v_var_count);
+    
+    SELECT v_var_empid, v_var_emp_name INTO 
+    
+END;
+/
+
 
 
 
