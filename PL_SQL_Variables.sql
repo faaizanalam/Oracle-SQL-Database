@@ -205,8 +205,8 @@ BEGIN
     SELECT COUNT(*) INTO v_var_count FROM EMPLOYEESS WHERE SALARY < v_var_spl;
     dbms_output.put_line('Value stored in variable v_var_count is : ' || v_var_count);
     
-    SELECT v_var_empid, v_var_emp_name INTO 
-    
+--    SELECT emp_id, e_first ||  ' ' || e_last INTO v_var_empid, v_var_emp_name
+--    FROM EMPLOYEESS WHERE     
 END;
 /
 
