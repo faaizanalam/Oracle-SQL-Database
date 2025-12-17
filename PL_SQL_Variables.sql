@@ -211,6 +211,24 @@ END;
 /
 
 
+---------------------------------------------Variables in working----------------------------------------------
+--Declare one variable v_lucky_number as number.
+--Count total number of departments and assign it to v_lucky_number variable.
+--multiply salary and employee_id and take the last three digits from that value and order employees and update their salary by v_lucky_number%.
+--take first lucky number employeess from that ordered employees and update their salary by v_lucky_number.
+
+DECLARE
+    v_lucky_number NUMBER;
+    
+BEGIN
+    SELECT COUNT(dept_id) INTO v_lucky_number FROM DEPARTMENTSS;
+    
+    
+END;
+/
+
+SELECT COUNT(dept_id) FROM DEPARTMENTSS;
+
 
 
 
