@@ -214,7 +214,7 @@ END;
 ---------------------------------------------Variables in working----------------------------------------------
 --Declare one variable v_lucky_number as number.
 --Count total number of departments and assign it to v_lucky_number variable.
---multiply salary and employee_id and take the last three digits from that value and order employees and update their salary by v_lucky_number%.
+--multiply salary and employee_id and take the last three digits from that value and order employees according to that number in desc,
 --take first lucky number employeess from that ordered employees and update their salary by v_lucky_number.
 
 DECLARE
@@ -222,16 +222,49 @@ DECLARE
     
 BEGIN
     SELECT COUNT(dept_id) INTO v_lucky_number FROM DEPARTMENTSS;
+    dbms_output.put_line('Value Stored in v_lucky_number is: ' || v_lucky_number);
     
+    UPDATE EMPLOYEESS
+    SET SALARY = v_lucky_number
+    WHERE EMP_ID = (SELECT EMP_ID FROM EMPLOYEESS
+    ORDER BY SUBSTR(EMP_ID * SALARY, -3, 1) DESC
+    FETCH FIRST 1 ROWS ONLY);
+     
+END;
+/
+
+---------------------------------------------Assignment---------------------------------------------------------
+--Create a PL/SQL which retrives count of all employeess where  manager is null and prints it.
+
+--Create a variable to store all the columns data of the emplyees table.
+--and assign values to the variable and insert it using that variable into employees table.
+
+DECLARE
+    v_var_count NUMBER;
+    v_var_empid NUMBER;
+    v_var_empfn VARCHAR(45);
+    v_var_empln VARCHAR2(45);
+    v_var_dptid NUMBER;
+    v_var_slry  NUMBER;
+
+BEGIN
+    SELECT COUNT(E_ID) INTO v_var_count FROM EMPLOYEEES
+    WHERE MGR_ID IS NULL;
+    dbms_output.put_line('Number of Employees where Managers IS NULL : ' || v_var_count);
+    
+    --Initiating Variables
+    v_var_empid := 141;
+    v_var_empfn := 'Magnus';
+    v_var_empln := 'Classen';
+    v_var_dptid := 9;
+    v_var_slry  := 60000;
+    
+    INSERT INTO  EMPLOYEES_FAIZAN(EMPLOYEE_ID,FIRST_NAME,LAST_NAME,DEPARTMENT_ID,SALARY)
+    VALUES(v_var_empid,v_var_empfn,v_var_empln,v_var_dptid,v_var_slry);
     
 END;
 /
 
-SELECT COUNT(dept_id) FROM DEPARTMENTSS;
-
-
-
-
-
-
+SELECT * FROM employees_faizan
+WHERE employee_id = 141;
 

@@ -227,4 +227,48 @@ union
 select * from employees1;
 
 
+CREATE TABLE Visits(
+visit_id NUMBER PRIMARY KEY,
+customer_id NUMBER
+);
 
+CREATE TABLE Transactions(
+transaction_id NUMBER PRIMARY KEY,
+visit_id       NUMBER,
+amount         NUMBER
+);
+
+ALTER TABLE Transactions
+ADD CONSTRAINT fk_key FOREIGN KEY (visit_id) REFERENCES Visits(visit_id)
+
+
+INSERT INTO Visits VALUES(1, 23);
+INSERT INTO Visits VALUES(2, 9);
+INSERT INTO Visits VALUES(4, 30);
+INSERT INTO Visits VALUES(5, 54);
+INSERT INTO Visits VALUES(6, 96);
+INSERT INTO Visits VALUES(7, 54);
+INSERT INTO Visits VALUES(8, 54);
+
+
+INSERT INTO Transactions VALUES(2, 5, 310);
+INSERT INTO Transactions VALUES(3, 5, 300);
+INSERT INTO Transactions VALUES(9, 5, 200);
+INSERT INTO Transactions VALUES(12,1, 910);
+INSERT INTO Transactions VALUES(13,2, 970);
+
+
+SELECT * FROM Visits;
+SELECT * FROM Transactions;
+
+SELECT * FROM VISITS V
+LEFT JOIN TRANSACTIONS T
+ON V.visit_id = T.visit_id;
+WHERE T.transaction_id IS NULL;
+
+
+
+SELECT * FROM VISITS V
+CROSS JOIN TRANSACTIONS T
+INNER JOIN VISITS VS
+ON V.VISIT_ID = VS.VISIT_ID;
