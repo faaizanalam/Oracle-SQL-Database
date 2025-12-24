@@ -251,7 +251,7 @@ BEGIN
     WHERE employee_id = v_var_emp_id;
     
     dbms_output.put_line('Salary After update : ' || v_var_salary);
-    
+     
     CASE MOD(v_var_salary, 2)
         WHEN 0 THEN
             UPDATE EMPLOYEES_FAIZAN
@@ -270,6 +270,29 @@ BEGIN
             dbms_output.put_line('ELSE Statement was executed');
     END CASE;
     
+------------------------------------------Alternate Solution----------------------------------------------------
+--
+--    IF MOD(v_var_salary, 2) = 0 THEN
+--         UPDATE EMPLOYEES_FAIZAN
+--            SET SALARY = ROUND(SALARY + (SALARY * 0.02))
+--            WHERE EMPLOYEE_ID > v_var_emp_id;
+--            dbms_output.put_line('Even Statement was executed..');
+--            GOTO label_3;
+--    ELSE
+--        goto label_2;
+--    
+--    END IF;
+--    
+--    <<label_2>>    
+--    UPDATE EMPLOYEES_FAIZAN
+--            SET SALARY = ROUND(SALARY + (SALARY * 0.05))
+--            WHERE EMPLOYEE_ID = (SELECT min(employee_id) FROM EMPLOYEES_FAIZAN
+--                                    WHERE employee_id > v_var_emp_id);
+--            dbms_output.put_line('Odd Statement was executed..');
+--    
+--    <<label_3>>
+--    dbms_output.put_line('END of line');
+--    
 END;
 /
 
@@ -283,11 +306,58 @@ FETCH FIRST ROW ONLY;
 SELECT * FROM EMPLOYEES_FAIZAN;
 
 
+--------------------------------------------------------Assignment--------------------------------------------------------
+--Create a PL/SQL block to take count of employees having 'A' and if count is odd then print the count of employees
+--
+DECLARE
+    v_var_count NUMBER;
+    
+BEGIN
+    SELECT count(employee_id) INTO v_var_count FROM EMPLOYEES_FAIZAN
+    WHERE FIRST_NAME LIKE('%A%');
+    
+    IF MOD(v_var_count, 2) = 0 THEN 
+        dbms_output.put_line('COUNT IS ODD : ' || v_var_count);
+    
+    ELSE 
+        dbms_output.put_line('COUNT IS EVEN : ' || v_var_count);
+    
+    END IF;
+END;
+/
+SELECT * FROM EMPLOYEES_FAIZAN 
+WHERE FIRST_NAME LIKE('%A%');
+
+--Create a PL/SQL block to check if the current minute is divisible by current hour, if yes, assign Yes to a variable 
+--else assign NO to a variable Using CASE...WHEN
+--Print the value of the variable and the current hour and minute too if valriable value is Yes.
+
+DECLARE
+    v_min NUMBER;
+    v_hour NUMBER;
+    var_val VARCHAR2(5);    
+BEGIN
+    SELECT EXTRACT(MINUTE FROM SYSTIMESTAMP) INTO v_min FROM DUAL;
+    SELECT EXTRACT(HOUR FROM SYSTIMESTAMP) INTO v_hour FROM DUAL;
+    
+    CASE MOD(v_min, v_hour) 
+    WHEN 0 THEN
+        var_val := 'YES';
+        dbms_output.put_line('DIVISIBLE..!');
+    ELSE 
+        var_val := 'NO';
+        dbms_output.put_line('NOT DIVISIBLE');
+    END CASE;
+    
+    IF var_val = 'YES' THEN
+        dbms_output.put_line('Current Minute : ' ||  v_min);
+        dbms_output.put_line('Current Hour : ' || v_hour);
+        dbms_output.put_line('Variable Value : ' || var_val);
+        
+    END IF;
+END;
+/
 
 
-
-
-
-
-
+SELECT EXTRACT(HOUR FROM SYSTIMESTAMP) FROM DUAL;
 
