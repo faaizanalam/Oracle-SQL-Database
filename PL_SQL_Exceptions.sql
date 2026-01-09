@@ -454,7 +454,7 @@ END;
 
 --Try to update a number column of employees table with a varchar value and check the error details.
 DECLARE
-    
+    --a number NOT NULL; ----must be intialized 
 BEGIN
     UPDATE EMPLOYEES
     SET COMMISSION_PCT = 'Eight';
