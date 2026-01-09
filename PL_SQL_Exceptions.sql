@@ -200,6 +200,283 @@ SELECT SUM(SALARY) FROM EMPLOYEES
 WHERE department_id = (SELECT department_id FROM DEPARTMENTS
         WHERE department_name = 'Operations');
 
+---------------------------------------OTHERS EXCEPTION : SQLCODE & SQLERRM-------------------------------------------------------------
+-----------------------------------------------*********************--------------------------------------------------------------------
+-----------------------------------------------INTERNAL EXCEPTION-----------------------------------------------------------------------
+DECLARE
+    v_num NUMBER(5);
+BEGIN
+    SELECT 50000000 INTO v_num FROM DUAL;
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        dbms_output.put_line('ERROR CODE : ' || SQLCODE);
+        dbms_output.put_line('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+-----------------------------------------------UNNAMMED EXCEPTION-----------------------------------------------------------------------
+DECLARE 
+    v_exp EXCEPTION;
+    PRAGMA EXCEPTION_INIT(v_exp, -2292);
+BEGIN
+    DELETE FROM DEPARTMENTS
+    WHERE DEPARTMENT_NAME = 'Human Resources';
+    
+EXCEPTION
+    WHEN v_exp THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR DELETING, FOREIGN KEY CONSTRAINT VOILATED!');
+        dbms_output.put_line('ERROR CODE : ' || SQLCODE);
+        dbms_output.put_line('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+SELECT * FROM DEPARTMENTS;
+
+-----------------------------------------------USER DEFINED EXCEPTION-----------------------------------------------------------------------
+DECLARE
+    v_exp EXCEPTION;
+    PRAGMA EXCEPTION_INIT(v_exp, -20099);
+BEGIN
+    RAISE v_exp;
+    
+EXCEPTION
+    WHEN v_exP THEN
+        DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+        dbms_output.put_line('ERROR CODE : ' || SQLCODE);
+        dbms_output.put_line('ERROR MESSAGE : ' || SQLERRM);  -- No message is returned for user defined exception with error code.
+END;
+/
+
+-----------------------------------------------USER DEFINED EXCEPTION WITHOUT PRAGMA----------------------------------------------------
+DECLARE
+    v_exp EXCEPTION;
+BEGIN
+    RAISE v_exp;
+    
+EXCEPTION
+    WHEN v_exP THEN
+        DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+        dbms_output.put_line('ERROR CODE : ' || SQLCODE);   -- 1 returned for user defined exception without error code.
+        dbms_output.put_line('ERROR MESSAGE : ' || SQLERRM); -- Error message: User-defined Exception.
+END;
+/
+
+----------------------------------------------RAISE APPLICATION ERROR EXCEPTION----------------------------------------------------------
+DECLARE
+
+BEGIN
+--    RAISE_APPLICATION_ERROR(-20004, NULL);
+    RAISE_APPLICATION_ERROR(-20009, 'THIS IS AN ERROR');
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+        dbms_output.put_line('ERROR CODE : ' || SQLCODE);
+        dbms_output.put_line('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+
+------------------------------------------------Assignment------------------------------------------------------------------
+--Try to fetch emp_id and emp_name of the employee having salary = 1500 into single variable using INTO 
+--and try if error occurs then handle it with OTHERS and print useful details reagarding the error.(Type of error, internal error message)
+DECLARE
+    v_id EMPLOYEES.EMPLOYEE_ID%TYPE;
+    v_name EMPLOYEES.FIRST_NAME%TYPE;
+    
+BEGIN
+    SELECT EMPLOYEE_ID, FIRST_NAME || ' ' || LAST_NAME INTO v_id, v_name FROM EMPLOYEES
+    WHERE SALARY = 1500;
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR!');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+--Try to divide the current minute with last digit of the current seconds and if error arrises then handle it with OTHERS with useful info about it 
+DECLARE 
+    v_sec NUMBER(2);
+    v_min NUMBER(2);
+    
+BEGIN
+    SELECT TRUNC(EXTRACT(SECOND FROM SYSTIMESTAMP)) INTO v_sec FROM DUAL;
+    SELECT TRUNC(EXTRACT(MINUTE FROM SYSTIMESTAMP)) INTO v_min FROM DUAL;
+    DBMS_OUTPUT.PUT_LINE('Current minute : ' || v_min);
+    DBMS_OUTPUT.PUT_LINE('Current second : ' || v_sec);
+    v_sec := SUBSTR(v_sec, -1); 
+    DBMS_OUTPUT.PUT_LINE('Last digit of current second is : ' || v_sec);
+    
+    DBMS_OUTPUT.PUT_LINE(v_min || ' divided by' || v_sec || ' is equal to : ' || TRUNC(v_min/v_sec));
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('ERRORxxxxxxxxxxxxxxxxxxxxxxxxxxx!');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR INFO : ' || SQLERRM);
+END;
+/
+
+--Create user-defined exception, attach error code with it. Raise the Exception if Department ID 2 has more than 4 employees in it,
+--handle the error using OTHERS.
+DECLARE
+    v_ude EXCEPTION;
+    PRAGMA EXCEPTION_INIT(v_ude, -20010);
+    v_emp NUMBER(2) := 0;
+BEGIN
+    SELECT COUNT(EMPLOYEE_ID) INTO v_emp FROM EMPLOYEES
+    WHERE department_id = 2;
+    DBMS_OUTPUT.PUT_LINE('EMPLOYEES IN DEPT_ID 2 ARE : ' || v_emp);
+--    v_emp := 5;
+    IF v_emp > 4 THEN
+        RAISE v_ude;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('LESS THAN 4');
+    END IF;
+    
+EXCEPTION
+    WHEN v_ude THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR---------!!');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+--Try to delete dept_id = 1 from departmemts table, and if any error then handle it gracefully and print all the details about the error.
+DECLARE
+    
+BEGIN
+    DELETE FROM DEPARTMENTS 
+    WHERE DEPARTMENT_ID = 10;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR-----!');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+--If total records into depratment and employees are greater than 17 then raise_application_error with code and messages of your choice 
+--and print that code and message in exception block.
+
+DECLARE
+    v_dep NUMBER;
+    v_emp NUMBER;
+    v_ude EXCEPTION;
+    PRAGMA EXCEPTION_INIT(v_ude, -20200);
+BEGIN
+    SELECT COUNT(EMPLOYEE_ID) INTO v_emp FROM EMPLOYEES;
+    SELECT COUNT(DEPARTMENT_ID) INTO v_dep FROM DEPARTMENTS;
+    
+    IF v_emp > 17 AND v_dep > 17 THEN
+        RAISE v_ude;
+        
+    END IF;
+EXCEPTION
+    WHEN v_ude THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR-----!');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+    
+END;
+/
+
+---------------------------------------------------------Assignment----------------------------------------------------------------------
+--CREATE a PL/SQL BLOCK DECLARE ONE VARIABLE v_salary.
+---->Take the v_salary = 8100, and fetch emp_id, name, salary, manager_id from employees table using salary > v_salary condition.
+SET SERVEROUTPUT ON;
+DECLARE 
+    v_salary NUMBER(5) := 8100;
+    v_emp EMPLOYEES.employee_id%TYPE;
+    v_name EMPLOYEES.FIRST_NAME%TYPE;
+    v_sal EMPLOYEES.SALARY%TYPE;
+    v_mgr EMPLOYEES.MANAGER_ID%TYPE;
+BEGIN
+    SELECT employee_id, First_name || ' ' || Last_name, Salary, manager_id INTO v_emp, v_name, v_sal, v_mgr
+    FROM EMPLOYEES
+    WHERE salary > v_salary;
+    
+EXCEPTION
+    WHEN TOO_MANY_ROWS THEN
+        DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+        DBMS_OUTPUT.PUT_LINE('Too many rows returned! Variable expected a single row');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);   --  -1422
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);--   exact fetch returns more than requested number of rows
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+        DBMS_OUTPUT.PUT_LINE('NO data returned! Variable expected atleast one row');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);   --  100 / -1403
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);--  no data found
+END;
+/
+
+
+--Try to assign the date in wrong format to date variable and check the SQLCODE and error message thrown by Oracle.
+DECLARE
+    v_date DATE;
+    
+BEGIN
+    v_date := TO_DATE('25-12-2002', 'MM-DD-YYYY');
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);   --  -1843
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);--   not a valid month
+END;
+/
+
+--Declare three variables and assign one variable the value which is var1/var2.
+---->Try to assign var2 as 0 and check the erro details.
+DECLARE
+    var1 NUMBER(5) := 5.566675;  -----***
+    var2 NUMBER(5) := 0;
+    var3 NUMBER(5);
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Variable value : ' || var1);
+    var3 := var1/var2;
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE); --   -1476
+        DBMS_OUTPUT.PUT_LINE('ERRO INFO : ' || SQLERRM);  --    divisor is equal to zero
+
+--*** How 5.56365363 is stored in NUMBER(5)
+--Even though the default scale is 0, the NUMBER data type in Oracle is a true decimal data type that can handle fractional values. 
+--When you attempt to insert a value with more digits than specified, the database attempts to fit it into the defined precision and scale. 
+--Rounding: The database will round the excess fractional digits to fit the specified scale (which is 0 in this case).
+--Result: The value 5.56365363 would be rounded to the nearest whole number, which is 6.              
+END;
+/
+
+--Try to update a number column of employees table with a varchar value and check the error details.
+DECLARE
+    
+BEGIN
+    UPDATE EMPLOYEES
+    SET COMMISSION_PCT = 'Eight';
+    
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('ERRO INFO : ' || SQLCODE); --     -1722
+        DBMS_OUTPUT.PUT_LINE('ERRO INFO : ' || SQLERRM); --     Invalid Number
+END;
+/
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
