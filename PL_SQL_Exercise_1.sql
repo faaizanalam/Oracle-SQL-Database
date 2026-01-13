@@ -298,16 +298,32 @@ END;
 --Experience must be ≥ 1 year
 --If any rule fails, raise an appropriate application error.
 DECLARE
-
+    v_age EMPLOYEEES.age%TYPE;
+    v_sal EMPLOYEEES.salary%TYPE;
+    v_exp NUMBER(10);
+    v_eid NUMBER(3) := &amp;
 BEGIN
-
+    SELECT AGE, SALARY, TRUNC((SYSDATE - Joining_date)/365) INTO v_age, v_sal, v_exp FROM EMPLOYEEES
+    WHERE E_ID = v_eid;
+    
+    IF v_age BETWEEN 18 AND 60 THEN
+        IF v_sal > 30000 THEN 
+            IF v_exp > 1 THEN
+                DBMS_OUTPUT.PUT_LINE('RECORD VALIDATED');
+            ELSE
+                RAISE_APPLICATION_ERROR(-20001, 'Work experiance should be atleat 1 year');
+            END IF;
+        ELSE
+            RAISE_APPLICATION_ERROR(-20002, 'Salary must be greater than 30000');
+        END IF;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20003, 'Age should be between 18 and 25');
+    END IF;
 EXCEPTION
-
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No Record exists for the input');
 END;
 /
-
-
-
 
 
 -----------------------------------------------------Senario#12-----------------------------------------------------------------------
@@ -316,11 +332,19 @@ END;
 --If odd → not eligible
 --Print result using CASE
 
-
-
-
-
-
+BEGIN
+    FOR i IN 1..5
+    LOOP
+        CASE MOD(i,2)
+            WHEN 1 THEN
+                DBMS_OUTPUT.PUT_LINE('Employee ' || i || ' is Eligible');
+            WHEN 0 THEN
+                DBMS_OUTPUT.PUT_LINE('Employee ' || i || ' is Not e
+                ligible');
+        END CASE;
+    END LOOP;
+END;
+/
 
 -----------------------------------------------------Senario#13-----------------------------------------------------------------------
 --Write a block that:
@@ -329,11 +353,26 @@ END;
 --Uses SQLCODE and SQLERRM
 --Re-raises the exception
 --Explain why re-raising is important.
-
-
-
-
-
+DECLARE
+    v_quotient NUMBER(4);
+    v_divisor NUMBER(4) := 0;
+    v_divident NUMBER(4) := 9;
+BEGIN
+    BEGIN
+        v_quotient := v_divident / v_divisor;
+    EXCEPTION
+        WHEN ZERO_DIVIDE THEN
+            DBMS_OUTPUT.PUT_LINE('INNER BLOCK : Cannot divide by Zero');
+            RAISE;
+    END;
+    
+EXCEPTION
+    WHEN ZERO_DIVIDE THEN
+        DBMS_OUTPUT.PUT_LINE('OUTER BLOCK : CANNOT DIVIVDE BY ZERO');
+END;
+/
+--When an exception occurs, PL/SQL stops normal execution and jumps to the EXCEPTION block. 
+--If that block finishes without a RAISE statement, control returns to the calling environment as if the procedure completed successfully.
 
 
 -----------------------------------------------------Senario#14-----------------------------------------------------------------------
@@ -346,13 +385,34 @@ END;
 --Continue processing
 --At end, print "Batch completed"
 --This mirrors real payroll/ETL systems.
+DECLARE
+    i NUMBER(2) := 0;
+BEGIN
+    WHILE(i <= 10)
+    LOOP
+        BEGIN
+            CASE i
+                WHEN 4 THEN
+                    RAISE_APPLICATION_ERROR(-20001, 'MISSING DATA');
+                WHEN 6 THEN 
+                    RAISE_APPLICATION_ERROR(-20003, 'INVALID SALARY');
+                ELSE
+                    NULL;
+            END CASE;
+        EXCEPTION
+            WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('MISSING DATA');
+        
+        END;
+        i := i + 1;
+    END LOOP;    
+    DBMS_OUTPUT.PUT_LINE('Batch Completed');
+END;
+/
 
-
-
-
-
-
+--If no condition is met and no ELSE clause is present, it raises a CASE_NOT_FOUND exception. (CASE Statement)
 
 -----------------------------------------------------Senario#15-----------------------------------------------------------------------
+
 
 -----------------------------------------------------Senario#16-----------------------------------------------------------------------
