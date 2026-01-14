@@ -413,6 +413,440 @@ END;
 --If no condition is met and no ELSE clause is present, it raises a CASE_NOT_FOUND exception. (CASE Statement)
 
 -----------------------------------------------------Senario#15-----------------------------------------------------------------------
+--Loop from 1 to 20:
+--Print numbers
+--If number divisible by 6 → print "Checkpoint reached"
+--Exit loop only after two checkpoints are reached
+--No hardcoded exit number.
 
+DECLARE
+    v_counter NUMBER(2) := 0;    
+BEGIN
+    FOR i IN 1..20
+    LOOP
+        IF MOD(i, 6) = 0 THEN
+            v_counter := v_counter + 1;
+        END IF;
+        DBMS_OUTPUT.PUT_LINE('Value of i : ' || i);
+        DBMS_OUTPUT.PUT_LINE('Value of v_counter : '|| v_counter);
+    EXIT WHEN v_counter = 2;
+    END LOOP;    
+END;
+/
 
 -----------------------------------------------------Senario#16-----------------------------------------------------------------------
+--Simulate processing 15 records:
+--If record divisible by 4 → NO_DATA_FOUND
+--If divisible by 7 → ZERO_DIVIDE
+--Log the error message
+--Continue processing
+--Count total errors
+--Print total errors at the end
+
+DECLARE
+    v_err NUMBER(2) := 0;
+BEGIN
+    FOR i IN 1..15
+    LOOP
+        BEGIN
+            IF MOD(i,4) = 0 THEN
+                v_err := v_err + 1;
+                RAISE NO_DATA_FOUND;
+            ELSIF MOD(i, 7) = 0 THEN
+                v_err := v_err + 1;
+                RAISE ZERO_DIVIDE;
+            END IF;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+                DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+                
+            WHEN ZERO_DIVIDE THEN
+                DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+                DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+        END;
+    END LOOP;
+    DBMS_OUTPUT.PUT_lINE('Total number of errors : ' || v_err);
+END;
+/
+
+-----------------------------------------------------Senario#17-----------------------------------------------------------------------
+--Using a basic LOOP, print numbers from 10 down to 1.
+--No FOR loop. No REVERSE keyword.
+DECLARE
+    v_num NUMBER(2);
+BEGIN
+    v_num := 10;
+    LOOP
+    DBMS_OUTPUT.PUT_LINE('Current Number : ' || v_num);
+    v_num := v_num - 1;
+    EXIT WHEN v_num = 0;
+    END LOOP;
+END;
+/
+
+-----------------------------------------------------Senario#18-----------------------------------------------------------------------
+--Create a block where:
+--Inner block raises a user-defined exception
+--Inner block handles it and logs message
+--Outer block re-raises the exception
+--Final output should stop execution
+--This tests exception propagation, not syntax.
+DECLARE
+    v_udf EXCEPTION;
+    PRAGMA EXCEPTION_INIT(v_udf, -20006);
+BEGIN
+    BEGIN
+        RAISE v_udf;
+    EXCEPTION
+        WHEN v_udf THEN
+            DBMS_OUTPUT.PUT_LINE('USER_DEFINED_ERROR ----- INNER BLOCK');
+            RAISE;     ---Re-raisiing
+    END;
+EXCEPTION
+    WHEN v_udf THEN
+        DBMS_OUTPUT.PUT_LINE('RE-RAISED USER_DEFINED_ERROR ----- OUTER BLOCK');
+END;
+/
+
+-----------------------------------------------------Senario#19-----------------------------------------------------------------------
+--Write a block that:
+--Performs multiple divisions inside a loop
+--Handles ZERO_DIVIDE silently
+--Counts how many times division failed
+--Prints summary at the end
+--No printing inside exception block.
+
+DECLARE
+    v_counter NUMBER := 0;
+    v_num NUMBER := 0;
+    v_end NUMBER := &amp;
+BEGIN
+    FOR i IN 1..v_end
+    LOOP
+        BEGIN
+            v_num := i / 0;
+        EXCEPTION
+            WHEN ZERO_DIVIDE THEN
+                v_counter := v_counter + 1;
+                NULL;
+        END;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Total Silent handles : ' || v_counter);
+END;
+/
+
+
+-----------------------------------------------------Senario#20-----------------------------------------------------------------------
+--Raise a custom error using RAISE_APPLICATION_ERROR
+--Catch it using WHEN OTHERS
+--Log error
+--Re-raise the same error   
+BEGIN
+    BEGIN
+        RAISE_APPLICATION_ERROR(-20005,'This is a custom error');
+    EXCEPTION
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('INNER BLOCK');
+            DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+            DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+            RAISE;
+    END;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('OUTER BLOCK');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+--Explain why this pattern is used in production systems.
+--When an exception occurs, PL/SQL stops normal execution and jumps to the EXCEPTION block. 
+--If that block finishes without a RAISE statement, control returns to the calling environment as if the procedure completed successfully.
+
+-----------------------------------------------------Senario#21-----------------------------------------------------------------------
+--Assign performance label using CASE:
+--Salary ≥ 150,000 → Excellent
+--Salary ≥ 100,000 → Very Good
+--Salary ≥ 70,000 → Good
+--Else → Needs Review
+--Then:
+--If label = Needs Review → raise warning error
+--Else print label
+
+DECLARE
+    v_label VARCHAR2(45);
+    v_sal NUMBER(9);
+    v_eid NUMBER := &amp;
+BEGIN
+    SELECT SALARY INTO v_sal FROM EMPLOYEEES
+    WHERE E_ID = v_eid;
+    
+    CASE 
+        WHEN v_sal >= 150000 THEN
+            v_label := 'Excellent';
+        WHEN v_sal >= 100000 THEN
+            v_label := 'Good';
+        WHEN v_sal >= 70000 THEN
+            v_label := 'Good';
+        ELSE 
+            v_label := 'Needs Review';
+        
+    END CASE;
+    
+    IF v_label = 'Needs Reivew' THEN
+        RAISE_APPLICATION_ERROR(-20009, 'Warning!!!!');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Label : ' || v_label);
+        
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN 
+        DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+SELECT * FROM EMPLOYEEES;
+
+-----------------------------------------------------Senario#22-----------------------------------------------------------------------
+--Given:
+--department_id
+--salary
+--
+--Rules:
+--Dept 10: minimum salary 50k
+--Dept 20: minimum salary 60k
+--Dept 30: minimum salary 70k
+--Invalid department → error
+--Invalid salary → error
+--Valid → print approval
+--Must use CASE + IF combo.
+
+DECLARE
+    v_dept EMPLOYEES.DEPARTMENT_ID%TYPE := &amp;
+    v_sal EMPLOYEES.SALARY%TYPE;    
+BEGIN
+    SELECT MIN(SALARY) INTO v_sal FROM EMPLOYEES
+    WHERE department_id = v_dept;
+    CASE v_dept
+        WHEN 10 THEN
+            IF v_sal < 50000 THEN
+                RAISE_APPLICATION_ERROR(-20009, 'DEPT 10: Invalid Salary');
+            END IF;
+        WHEN 20 THEN
+            IF v_sal < 60000 THEN
+                RAISE_APPLICATION_ERROR(-20010, 'DEPT 20: Invalid Salary');
+            END IF;
+        WHEN 30 THEN
+            IF v_sal < 70000 THEN
+                RAISE_APPLICATION_ERROR(-20011, 'DEPT 30: Invalid Salary');
+            END IF; 
+        ELSE
+            RAISE_APPLICATION_ERROR(-20003, 'Invalid Department');
+    END CASE;
+    DBMS_OUTPUT.PUT_LINE('Results are valid');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+-----------------------------------------------------Senario#23-----------------------------------------------------------------------
+--What’s wrong with this logic?
+--
+--IF v_salary = NULL THEN
+--  RAISE_APPLICATION_ERROR(-20001,'Salary missing');
+--END IF;
+--
+--Fix it and explain why the original fails.
+
+DECLARE
+    v_salary NUMBER := NULL;
+BEGIN
+    IF v_salary = NULL THEN
+    RAISE_APPLICATION_ERROR(-20001,'Salary missing');
+    END IF;
+END;
+/
+
+--Above scripts contains a logical error in how the if statement compares the variable with NULL value, 
+--equla operator never returns true or false when compared with null, because there is nothing to compare to, thus the IF
+--clause is never executed and no exception is raised.
+--In order to solve it we should replace the equal operator with 'IS' operator, as carried below;
+DECLARE
+    v_salary NUMBER := NULL;
+BEGIN
+    IF v_salary IS NULL THEN
+    RAISE_APPLICATION_ERROR(-20001,'Salary missing');
+    END IF;
+END;
+/
+
+-----------------------------------------------------Senario#24-----------------------------------------------------------------------
+--Why does this code stop early?
+--
+--FOR i IN 1..10 LOOP
+--  IF i = 5 THEN
+--    RAISE NO_DATA_FOUND;
+--  END IF;
+--  DBMS_OUTPUT.PUT_LINE(i);
+--END LOOP;
+--
+--Rewrite it so only record 5 fails.
+
+--WHEN FOR LOOP REACHES counter 5, the program raises an expection ending program execution. 
+--In order to solve this we could write the if part of the code inside an inner block, and handling exception there.
+BEGIN
+FOR i IN 1..10 LOOP
+    BEGIN
+        IF i = 5 THEN
+            RAISE no_data_found;
+        END IF;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+            DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+            DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+            CONTINUE;
+    END;
+    dbms_output.put_line(i);
+END LOOP;
+END;
+/
+
+-----------------------------------------------------Senario#25-----------------------------------------------------------------------
+--Write a block where:
+--If validation fails, execution jumps to cleanup section
+--Cleanup prints "Resources released"
+--Normal execution prints "Completed successfully"
+--Use GOTO correctly and safely.
+
+DECLARE
+    v_inp NUMBER := &amp; 
+BEGIN
+    IF v_inp > 1 THEN
+        NULL;
+    ELSE
+        GOTO cleanup;
+    END IF;    
+    
+    DBMS_OUTPUT.PUT_LINE('Completed successfully');
+    GOTO ending;
+    
+    <<cleanup>>
+    DBMS_OUTPUT.PUT_LINE('Resources released');
+    
+    <<ending>>
+    NULL;
+END;
+/
+
+
+-----------------------------------------------------Senario#26-----------------------------------------------------------------------
+--Simulate payroll for 8 employees:
+--Loop through employees
+--If employee number:
+--
+--3 → missing salary
+--6 → invalid bonus
+--Handle errors individually
+--Count successful payrolls
+--Count failed payrolls
+--Print final summary
+--
+--This must:
+--Continue after failures
+--Use SQLERRM
+--Use at least one CONTINUE
+--Use one user-defined exception
+DECLARE
+    v_count_err NUMBER(5) := 0;
+    v_count_suc NUMBER(5) := 0;
+    missing_salary EXCEPTION;
+    PRAGMA EXCEPTION_INIT(missing_salary, -22002);
+BEGIN
+    FOR i IN 1..8
+    LOOP
+        BEGIN
+            IF i = 3 THEN
+                v_count_err := v_count_err + 1;
+                RAISE missing_salary;
+            ELSIF i = 6 THEN
+                v_count_err := v_count_err + 1;
+                RAISE_APPLICATION_ERROR(-20002, 'Invalid Boss');
+            ELSE
+                v_count_suc := v_count_suc + 1;
+                CONTINUE;
+            END IF;
+        
+            EXCEPTION
+            WHEN missing_salary THEN
+                DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED, DETAILS BELOW, CODE CONTNUES');
+                DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+                DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+                
+            WHEN OTHERS THEN
+                DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED, DETAILS BELOW, CODE CONTNUES');
+                DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+                DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+            END;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Total Successful payrolls : ' || v_count_suc);
+    DBMS_OUTPUT.PUT_LINE('Total Failed payrolls : ' || v_count_err);
+END;
+/
+
+-----------------------------------------------------Senario#27-----------------------------------------------------------------------
+--Write a PL/SQL block that:
+--Accepts user input variables
+--Validates all inputs
+--Handles unexpected errors
+--Never crashes silently
+--Always logs final status
+--This is how production PL/SQL is judged.
+
+DECLARE
+    v_str VARCHAR2(45) := '&String';
+    v_num NUMBER(8) := &number;
+    v_str_short EXCEPTION;
+    PRAGMA EXCEPTION_INIT(v_str_short, -20023);
+BEGIN
+    IF LENGTH(v_str) < 3 THEN
+        RAISE v_str_short;
+    END IF;
+    DBMS_OUTPUT.PUT_LINE(v_num);
+    
+    IF v_num < 0 THEN
+        RAISE_APPLICATION_ERROR(-20034, 'Number must be positive');
+    END IF;
+    
+EXCEPTION
+    WHEN v_str_short THEN
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : Entered string too short');
+        
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('EXCEPTION HANDLED');
+        DBMS_OUTPUT.PUT_LINE('ERROR CODE : ' || SQLCODE);
+        DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
+END;
+/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
