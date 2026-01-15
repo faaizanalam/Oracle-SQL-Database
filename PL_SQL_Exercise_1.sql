@@ -835,18 +835,3 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('ERROR MESSAGE : ' || SQLERRM);
 END;
 /
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
