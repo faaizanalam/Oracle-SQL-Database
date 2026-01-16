@@ -127,5 +127,41 @@ SELECT * FROM USER_TAB_COMMENTS;
 
 SELECT * FROM DEPARTMENTSS;
 
+SELECT * FROM USER_TAB_COLUMNS WHERE COLUMN_NAME = 'COUNTRY_NAME';
+SELECT * FROM USER_CONS_COLUMNS WHERE COLUMN_NAME = 'COUNTRY_NAME';
+
+-------------------------------------------------------User-definined Recordtype------------------------------------------------
+-->Create a PL/SQL BLOCK
+---->Create one record type based on employees table.
+DECLARE
+    typ_emp EMPLOYEES_FAIZAN%ROWTYPE;
+BEGIN
+    SELECT * INTO typ_emp FROM EMPLOYEES_FAIZAN
+    WHERE First_name = 'Adam';
+    
+    DBMS_OUTPUT.PUT_LINE('Employee Id : ' || typ_emp.EMPLOYEE_ID);
+    DBMS_OUTPUT.PUT_LINE('FIRST_NAME : ' || typ_emp.FIRST_NAME);
+    DBMS_OUTPUT.PUT_LINE('LAST_NAME : ' || typ_emp.LAST_NAME);
+    DBMS_OUTPUT.PUT_LINE('DEPARTMENT_ID : ' || typ_emp.DEPARTMENT_ID);
+    DBMS_OUTPUT.PUT_LINE('SALARY : ' || typ_emp.SALARY);
+
+END;
+/
+
+select * from EMPLOYEES_FAIZAN;
+set serveroutput on;
+--Take one record into  record type having third highest salary amoung all emlpoyee.
+---->Print its details all columns.
+------->change the salary to salary + 50 and update the same record using row keyword.
+
+
+
+--Create a PL/SQL BLock
+--Declare one user defined record type and variable. Attributes of the record type should be 
+--emp_id, emp_name, dept_id, dept_name.
+
+--Select any one employee(wihtout where condition) and fetch its detials into your record type.
+---->Print the details of the employees from the type.
+
 
 
