@@ -18,6 +18,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('SALARY : ' || vrec_emp.SALARY);
     DBMS_OUTPUT.PUT_LINE('JOINING_DATE : ' || vrec_emp.JOINING_DATE);
     DBMS_OUTPUT.PUT_LINE('LEAVING_DATE : ' || vrec_emp.LEAVING_DATE);
+    
 END;
 /
 
@@ -150,9 +151,34 @@ END;
 
 select * from EMPLOYEES_FAIZAN;
 set serveroutput on;
---Take one record into  record type having third highest salary amoung all emlpoyee.
+--Take one record into record type having third highest salary amoung all employees.
 ---->Print its details all columns.
 ------->change the salary to salary + 50 and update the same record using row keyword.
+DECLARE
+    typ_rec_emp employees_faizan%ROWTYPE;
+BEGIN
+    SELECT * INTO typ_rec_emp FROM employees_faizan
+    ORDER BY SALARY DESC NULLS LAST
+    OFFSET 3 ROWS 
+    FETCH NEXT 1 ROW ONLY;
+    
+    DBMS_OUTPUT.PUT_LINE('Employee Id : ' || typ_rec_emp.EMPLOYEE_ID);
+    DBMS_OUTPUT.PUT_LINE('FIRST_NAME : ' || typ_rec_emp.FIRST_NAME);
+    DBMS_OUTPUT.PUT_LINE('LAST_NAME : ' || typ_rec_emp.LAST_NAME);
+    DBMS_OUTPUT.PUT_LINE('DEPARTMENT_ID : ' || typ_rec_emp.DEPARTMENT_ID);
+    DBMS_OUTPUT.PUT_LINE('SALARY : ' || typ_rec_emp.SALARY);
+    
+    typ_rec_emp.SALARY := typ_rec_emp.SALARY + 50;
+    
+    DBMS_OUTPUT.PUT_LINE('Salary updated! ');
+    DBMS_OUTPUT.PUT_LINE('SALARY : ' || typ_rec_emp.SALARY);
+    
+    UPDATE EMPLOYEES_FAIZAN
+    SET ROW = typ_rec_emp;
+    
+END;
+/
+select * from EMPLOYEES_FAIZAN;
 
 
 
@@ -160,8 +186,26 @@ set serveroutput on;
 --Declare one user defined record type and variable. Attributes of the record type should be 
 --emp_id, emp_name, dept_id, dept_name.
 
+
+
+
+
+
+
 --Select any one employee(wihtout where condition) and fetch its detials into your record type.
 ---->Print the details of the employees from the type.
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
