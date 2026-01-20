@@ -185,15 +185,38 @@ select * from EMPLOYEES_FAIZAN;
 --Create a PL/SQL BLock
 --Declare one user defined record type and variable. Attributes of the record type should be 
 --emp_id, emp_name, dept_id, dept_name.
-
-
-
-
-
-
-
 --Select any one employee(wihtout where condition) and fetch its detials into your record type.
 ---->Print the details of the employees from the type.
+
+DECLARE
+TYPE rec_emp IS record 
+(   emp_id employees.EMPLOYEE_ID%TYPE,
+    emp_name employees.FIRST_NAME%TYPE,
+    dept_id departments.DEPARTMENT_ID%TYPE,
+    dept_name departments.DEPARTMENT_NAME%TYPE
+);
+
+rec_emp_var rec_emp;
+BEGIN
+    SELECT E.EMPLOYEE_ID, E.FIRST_NAME, D.department_id, D.department_name INTO 
+    rec_emp_var.emp_id, rec_emp_var.emp_name, rec_emp_var.dept_id, rec_emp_var.dept_name
+    FROM EMPLOYEES E
+    INNER JOIN DEPARTMENTS D
+    ON E.DEPARTMENT_ID = D.DEPARTMENT_ID
+    ORDER BY SALARY DESC
+    FETCH FIRST 1 ROWS ONLY;
+    
+    DBMS_OUTPUT.PUT_LINE('Employee Id : ' || rec_emp_var.emp_id);
+    DBMS_OUTPUT.PUT_LINE('Employee First Name : ' || rec_emp_var.emp_name);
+    DBMS_OUTPUT.PUT_LINE('Department Id : ' || rec_emp_var.dept_id);
+    DBMS_OUTPUT.PUT_LINE('Department Name : ' || rec_emp_var.dept_name);
+    
+END;
+/
+
+set serveroutput on;
+
+
 
 
 
