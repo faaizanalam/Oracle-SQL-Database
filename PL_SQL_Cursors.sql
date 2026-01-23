@@ -387,7 +387,6 @@ BEGIN
         LOOP
             FETCH cur_emp INTO rec_cur_emp;
             IF i.SALARY > rec_cur_emp.SALARY THEN
-                    DBMS_OUTPUT.PUT_LINE('EMPLOYEES WITH LOWER SALARY THEN CURRENT');
                     DBMS_OUTPUT.PUT_LINE('FIRST_NAME : ' || i.FIRST_NAME);
                     DBMS_OUTPUT.PUT_LINE('LAST_NAME : ' || i.LAST_NAME);
                     DBMS_OUTPUT.PUT_LINE('DEPARTMENT_ID : ' || i.DEPARTMENT_ID);
@@ -396,7 +395,7 @@ BEGIN
             
             EXIT WHEN cur_emp%NOTFOUND;
         END LOOP;
-        
+        CLOSE cur_emp;
         
     END LOOP;
     CLOSE cur_emp;
