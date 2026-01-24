@@ -392,11 +392,9 @@ BEGIN
                     DBMS_OUTPUT.PUT_LINE('DEPARTMENT_ID : ' || i.DEPARTMENT_ID);
                     DBMS_OUTPUT.PUT_LINE('SALARY : ' || i.SALARY);               
             END IF;
-            
             EXIT WHEN cur_emp%NOTFOUND;
         END LOOP;
         CLOSE cur_emp;
-        
     END LOOP;
     CLOSE cur_emp;
 END;
