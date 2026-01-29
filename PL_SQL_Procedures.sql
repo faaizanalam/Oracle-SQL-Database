@@ -178,36 +178,194 @@ SELECT * FROM DEPARTMENTSS;
 
 
 ------------------------------------------------*****************------------------------------------------
---Create the procedure to update the department of the lowest salaried employee of the department of the passed(input) employee to the next
+--Create the procedure to update the department of the lowest salaried employee of the department of the passed input(employee_id) to the next
 --highest average salaried department. INSERT the logs into log table(assignment_logs)
-CREATE OR REPLACE PROCEDURE PROC_EMP_SAL(p_inp_dept DEPARTMENTSS.DEPT_ID%TYPE)
-AS
-    v_low_emp NUMBER(9);
-    v_dept_avg NUMBER(9);
-    v_dept NUMBER;
-    v_dept_upt NUMBER;
-    
+--
+--CREATE OR REPLACE PROCEDURE PROC_EMP_DEPT_UPT(p_inp_emp EMPLOYEES_FAIZAN.EMPLOYEE_ID%TYPE, p_out_res OUT VARCHAR2)
+--AS
+--    v_low_emp NUMBER(9);
+--    v_dept_avg NUMBER(9);
+--    v_dept NUMBER;
+--    v_dept_upt NUMBER;
+--    
+--BEGIN
+--    SELECT department_id INTO v_dept FROM EMPLOYEES_FAIZAN
+--    WHERE EMPLOYEE_ID = p_inp_emp;
+--    
+--    SELECT EMPLOYEE_ID INTO v_low_emp FROM EMPLOYEES_FAIZAN
+--    WHERE department_id = v_dept AND SALARY = (SELECT MIN(SALARY) FROM EMPLOYEES_FAIZAN WHERE DEPARTMENT_ID = v_dept)
+--    FETCH FIRST 1 ROW ONLY;
+--
+--
+--    SELECT AVG(SALARY) INTO v_dept_avg FROM EMPLOYEES_FAIZAN
+--    WHERE department_id = v_dept;
+--    
+--    SELECT department_id INTO v_dept_upt FROM EMPLOYEES_FAIZAN
+--    GROUP BY department_id
+--    HAVING AVG(SALARY) > v_dept_avg 
+--    ORDER BY AVG(SALARY)
+--    FETCH FIRST 1 ROW ONLY;
+--    
+--    UPDATE EMPLOYEES_FAIZAN
+--    SET DEPARTMENT_ID = v_dept_upt
+--    WHERE EMPLOYEE_ID = v_low_emp;
+--    
+--    p_out_res := 'Success! Employee with id : ' || v_low_emp || '  having dept_id : ' || v_dept || ' was updated with dept_id : ' || v_dept_upt;
+--    
+--    INSERT INTO tab_proc_log (log_id, log_ts, action_taken) VALUES ( seq_tab_proc_log.NEXTVAL,
+--    systimestamp, 'Success! Employee with id : ' || v_low_emp || '  having dept_id : ' || v_dept || ' was updated with dept_id : ' || v_dept_upt);
+--    
+--EXCEPTION
+--    WHEN NO_DATA_FOUND THEN
+--        IF v_dept IS NULL THEN
+--            p_out_res := 'Task Failed, No Employee exists with Employee_id : ' || p_inp_emp;
+--            INSERT INTO tab_proc_log (log_id, log_ts, action_taken) VALUES ( seq_tab_proc_log.NEXTVAL,
+--            systimestamp, 'Task Failed, No Employee exists with Employee_id : ' || p_inp_emp);
+--            RETURN;
+--        ELSIF v_dept_upt IS NULL THEN 
+--            p_out_res := 'Task Failed, No department with higher salary averge than dept : ' || v_dept_avg || ' (employee dept) Exists.';
+--            INSERT INTO tab_proc_log (log_id, log_ts, action_taken) VALUES ( seq_tab_proc_log.NEXTVAL,
+--            systimestamp, 'Task Failed, No department with higher salary averge than dept : ' || v_dept_avg || ' (employee dept) Exists.');
+--            RETURN;
+--        END IF;
+--END;
+--/
+
+DECLARE
+    p_out VARCHAR(200);
 BEGIN
-    SELECT deptartment_id INTO v_dept FROM EMPLOYEES_FAIZAN
-    WHERE EMPLOYEE_ID = p_inp_dept;
-    
-    SELECT EMPLOYEE_ID INTO v_low_emp FROM EMPLOYEES_FAIZAN
-    WHERE department_id = v_dept AND SALARY = (SELECT MIN(SALARY) FROM EMPLOYEES_FAIZAN WHERE DEPARTMENT_ID = v_dept);
-    
-    SELECT AVG(SALARY) INTO v_dept_avg FROM EMPLOYEES_FAIZAN
-    WHERE department_id = v_dept;
-    
-    SELECT dept_id INTO v_dept_upt FROM EMPLOYEES_FAIZAN
-    WHERE v_dept_avg < (SELECT AVG(SALARY) FROM )
-    
+    PROC_EMP_DEPT_UPT(105, p_out);
+    DBMS_OUTPUT.PUT_LINE(p_out);
 END;
 /
 
 
+SELECT * FROM EMPLOYEES_FAIZAN;
+
+SELECT AVG(SALARY) FROM EMPLOYEES_FAIZAN
+WHERE department_id = 6;
+
+SELECT department_id FROM EMPLOYEES_FAIZAN
+    GROUP BY department_id
+    HAVING AVG(SALARY) > (SELECT AVG(SALARY) FROM EMPLOYEES_FAIZAN
+                            WHERE department_id = 10)
+    ORDER BY AVG(SALARY)
+    FETCH FIRST 1 ROW ONLY;
+
+SELECT * FROM tab_proc_log;
 
 
 
 --Create a procedure to divide the salary decrements amoung all the employees of the department using their salary ratio.
 --department name and total salary decrement for department as an input. log the details into log table(assignment_logs).
+CREATE OR REPLACE PROCEDURE PROC_EMP_SAL_UPT(p_in_dept_name IN DEPARTMENTSS.DEPT_NAME%TYPE, p_in_decr IN NUMBER, p_out_status OUT VARCHAR2)
+AS
+    v_dept_id NUMBER(7);
+    v_dept_sal_sum NUMBER(9);
+BEGIN
+    SELECT DEPT_ID INTO v_dept_id FROM DEPARTMENTSS
+    WHERE DEPT_NAME = p_in_dept_name;
+    
+    SELECT SUM(SALARY) INTO v_dept_sal_sum FROM EMPLOYEES_FAIZAN
+    GROUP BY SALARY
+    HAVING DEPARTMENT_ID = v_dept_id
+    ORDER BY SALARY
+    FETCH FIRST 1 ROWS ONLY;
+    
+    IF v_dept_sal_sum < p_in_decr THEN
+        p_out_status := 'TASK FAILED! ENTERED AMOUNT EXCEEDS TOTAL DEPT BUDGET';
+        INSERT INTO tab_proc_log (log_id, log_ts, action_taken) VALUES ( seq_tab_proc_log.NEXTVAL,
+        systimestamp, 'TASK FAILED! ENTERED AMOUNT EXCEEDS TOTAL DEPT BUDGET');
+        RETURN;
+        
+    ELSE       
+        UPDATE EMPLOYEES_FAIZAN
+        SET SALARY = SALARY / v_dept_sal_sum * p_in_decr
+        WHERE DEPARTMENT_ID = v_dept_id;
+        
+        p_out_status := 'PROC_EMP_SAL_UPT----->>SALARIES HAVE BEEN DECREMNETED SUCCESSFULLY!';
+        INSERT INTO tab_proc_log (log_id, log_ts, action_taken) VALUES ( seq_tab_proc_log.NEXTVAL,
+        systimestamp, 'PROC_EMP_SAL_UPT----->>SALARIES HAVE BEEN DECREMNETED SUCCESSFULLY!');
+        RETURN;
+    END IF;
+    
+    
+           
+END;
+/
+
+DECLARE
+    v_out VARCHAR2(300);
+BEGIN
+
+    PROC_EMP_SAL_UPT('Human Resources', 100, v_out);
+    DBMS_OUTPUT.PUT_LINE(v_out);
+
+END;
+/
+
+SELECT * FROM EMPLOYEES_FAIZAN
+WHERE DEPARTMENT_ID = (SELECT DEPT_ID FROM DEPARTMENTSS WHERE DEPT_NAME = 'Human Resources');
+SELECT * FROM tab_proc_log;
+SELECT * FROM DEPARTMENTSS
+WHERE DEPT_NAME = 'Human Resources';
+
+
+------------------------------------------------****************************------------------------------------------------
+---------------------------------------------------------Assignment---------------------------------------------------------
+--Create a procedure which accepts the department_name, employee_firstname and lastname in a single parameter 
+---serparated by a hyphen and manager_id.
+---Output variable should be emp_id(returns employee's emp_id or -1 incase of an error).
+----Out_paramter should print a status message regarding the success or failure of the operation(SQL CODE, SQLERRM).
+----ALL PARAMETERS SHOULD BE VALIDATED!
+-----If the employee does not exists then add it to the table, with salary : second highest in the dept + 100 and then return its emp id.
+
+CREATE TABLE EMP_PROC(
+EMP_ID NUMBER PRIMARY KEY,
+FIRST_NAME VARCHAR2(60),        --------CREATING A DUMMY TABLE FOR THE TASK
+LAST_NAME VARCHAR2(60),
+MANAGERS_ID NUMBER(4),
+DEPT_ID NUMBER(6),
+SALARY NUMBER(9)
+);
+
+CREATE SEQUENCE SEQ_EMP_PROC        ------SEQUENCE FOR THE TABLE
+START WITH 3000
+INCREMENT BY 1
+MAXVALUE 300000;
+
+---------------------->>>>>>>>>>>>>>>>>>>>>>>>>>90 Records inserted 
+SELECT * FROM EMP_PROC;
+
+CREATE OR REPLACE PROCEDURE PROC_EMP_VALID(P_in_dept_name EMP_PROC.DEPT_NAME%TYPE, p_in_emp_name VARCHAR2, p_in_mgr_id EMP_PROC.MANAGERS_ID%TYPE, 
+p_out_empid OUT NUMBER, p_out_status OUT VARCHAR2)
+AS 
+    NO_HYPHEN_FOUND EXCEPTION;
+    
+    PRAGMA EXCEPTION_INIT(NO_HYPHEN_FOUND, -20003);
+    
+    
+
+BEGIN
+    IF INSTR(p_in_emp_name, '-', 1) = 0 THEN
+        DBMS_OUTPUT.PUT_lINE('NO HYPHEN FOUND');
+        RAISE NO_HYPHEN_FOUND;
+    ELSE
+        SUBTR(p_in_emp_name, )
+        
+        
+    END IF;
+    
+END;
+/
+/
+
+------------------------------------------***********************-------------------------------------------
+
+
+
+
+
+
 
 
