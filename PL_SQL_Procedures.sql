@@ -4,7 +4,6 @@
  ---1.Create the procedure to update the salary of the employees by a given percentage. (emp_id, dept_id, increment_percentage, as input).
  ----log the details into logs table if provided data is incorrect.
  
- 
 CREATE TABLE TAB_PROC_LOG
 (log_id NUMBER PRIMARY KEY,
 log_ts TIMESTAMP,
@@ -20,7 +19,6 @@ BEGIN
     PROC_EMP_SAL(100, 9, 15);
 END;
 /
-
 
 SELECT * FROM TAB_PROC_LOG;
 SELECT * FROM EMPLOYEES_FAIZAN;
@@ -329,8 +327,9 @@ DEPT_ID NUMBER(6),
 SALARY NUMBER(9)
 );
 
+
 CREATE SEQUENCE SEQ_EMP_PROC        ------SEQUENCE FOR THE TABLE
-START WITH 3000
+START WITH 3090
 INCREMENT BY 1
 MAXVALUE 300000;
 
@@ -344,18 +343,79 @@ AS
     
     PRAGMA EXCEPTION_INIT(NO_HYPHEN_FOUND, -20003);
     
-    
-
+    v_salary NUMBER(8);
+    v_first VARCHAR2(70);
+    v_last VARCHAR2(70);
+    v_name_chk NUMBER(4);
+    v_hyphen NUMBER(3);
+    v_dept NUMBER(3);
+    v_mgr NUMBER(5);
+    v_mgr_chk NUMBER(5);
+    e_id NUMBER(8);
 BEGIN
-    IF INSTR(p_in_emp_name, '-', 1) = 0 THEN
-        DBMS_OUTPUT.PUT_lINE('NO HYPHEN FOUND');
-        RAISE NO_HYPHEN_FOUND;
-    ELSE
-        SUBTR(p_in_emp_name, )
-        
-        
-    END IF;
+    v_hyphen := INSTR(p_in_emp_name, '-', 1);
     
+    SELECT Dept_id INTO v_dept FROM DEPARTMENTSS 
+    WHERE INITCAP(DEPT_NAME) = INITCAP(P_in_dept_name);
+    
+    CASE
+        WHEN v_hyphen = 0 THEN
+            DBMS_OUTPUT.PUT_lINE('NO HYPHEN FOUND');
+            RAISE NO_HYPHEN_FOUND;
+    
+        WHEN v_dept NOT BETWEEN 1 AND 10 THEN
+            DBMS_OUTPUT.PUT_lINE(' INVALID DEPT ID');
+            RAISE INVALID_DEPT;
+        
+        WHEN v_mgr NOT BETWEEN 101 AND 105 THEN
+            DBMS_OUTPUT.PUT_lINE(' INVALID MGR ID');
+            RAISE INVALID_MGR;
+        
+        ELSE 
+            v_first := SUBSTR(p_in_emp_name, v_hyphen + 1);
+            v_last := SUBSTR(p_in_emp_name, 1, v_hyphen - 1);
+            
+            SELECT COUNT(*) INTO v_name_chk FROM EMP_PROC 
+            WHERE First_name = v_first AND Last_name = v_last;
+            
+            IF v_name_chk > 0 THEN
+                SELECT COUNT(*) INTO v_dept_chk FROM EMP_PROC
+                WHERE First_name = v_first AND Last_name = v_last AND Dept_id = v_dept;
+                 
+                SELECT COUNT(*), emp_id INTO v_mgr_chk, e_id FROM EMP_PROC
+                WHERE First_name = v_first AND Last_name = v_last AND Dept_id = v_dept AND Managers_id = p_in_mgr_id;
+                
+                IF v_mgr_chk > 0 THEN
+                    DBMS_OUTPUT.PUT_LINE('SUCCESS');
+                    p_out_empid := e_id;
+                ELSE
+                    DBMS_OUTPUT.PUTLINE('');
+                    SELECT SALARY INTO v_salary FROM EMP_PROC 
+                    ORDER BY SALARY ASC
+                    OFFSET 1 ROWS 
+                    FETCH NEXT 1 ROWS ONLY;
+                    INSERT INTO EMP_PROC(EMP_ID, FIRST_NAME, LAST_NAME, MANAGERS_ID, DEPT_ID, SALARY)
+                    VALUES(SEQ_EMP_PROC.NEXTVAL, v_first, v_last, );
+                 END IF;
+        
+            ELSE
+                SELECT SALARY INTO v_salary FROM EMP_PROC 
+                ORDER BY SALARY ASC
+                OFFSET 1 ROWS 
+                FETCH NEXT 1 ROWS ONLY;
+               INSERT INTO EMP_PROC(EMP_ID, FIRST_NAME, LAST_NAME, MANAGERS_ID, DEPT_ID, SALARY)
+               VALUES(SEQ_EMP_PROC.NEXTVAL, v_first, v_last, );
+            END IF;
+    END CASE;
+                                    ------------------------Incomplete....!
+EXCEPTION
+    WHEN NO_HYPHEN_FOUND THEN
+    
+    WHEN INVALID_DEPT THEN
+    
+    WHEN INVALID_MGR_ID THEN
+
+
 END;
 /
 /
@@ -363,8 +423,10 @@ END;
 ------------------------------------------***********************-------------------------------------------
 
 
+SELECT INSTR('HELLO-WORLD', '-', 1) FROM DUAL;
 
-
+SELECT SUBSTR('HELLO-WORLD', (SELECT INSTR('HELLO-WORLD', '-', 1) FROM DUAL) + 1) FROM DUAL;
+SELECT SUBSTR('HELLO-WORLD', 1, (SELECT INSTR('HELLO-WORLD', '-', 1) FROM DUAL) - 1) FROM DUAL;
 
 
 
