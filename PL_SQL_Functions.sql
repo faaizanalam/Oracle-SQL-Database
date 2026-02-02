@@ -22,7 +22,7 @@ BEGIN
             WHERE EMPLOYEE_ID = p_in_emp;
         END IF;
     END IF;
-    
+       
     SELECT COUNT(*) INTO v_count FROM EMPLOYEES_FAIZAN
     WHERE DEPARTMENT_ID = v_dept;
         
