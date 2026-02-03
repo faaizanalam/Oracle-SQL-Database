@@ -129,33 +129,54 @@ IS
 v_F_hund NUMBER(4);
 v_thousnd NUMBER(3);
 v_F_thousand NUMBER(3);
+
+count_f_hund NUMBER := 0;
+count_thousand NUMBER := 0;
+count_f_thousand NUMBER := 0;
+
+v_qou NUMBER;
+v_rem NUMBER;
+v_inp NUMBER;
+v_total NUMBER;
 BEGIN
+    SELECT Five_HUNDRED * 500 + One_THOUSAND * 1000 + Five_THOUSAND * 5000 
+    INTO v_total FROM ATM_WITHDRAWAL;
     IF MOD(p_in_amt, 500) <> 0 THEN
         DBMS_OUTPUT.PUT_LINE('Amount should be a multiple of 500.');
-        RETURN -1;
-    ELSIF p_in_amt > (SELECT One_HUNDRED * 100 + Five_HUNDRED * 500 + One_THOUSAND * 1000 + Five_THOUSAND * 5000 
-    FROM ATM_WITHDRAWAL) THEN
+        RETURN 'Amount should be a multiple of 500.';
+
+    ELSIF p_in_amt > v_total THEN
         DBMS_OUTPUT.PUT_LINE('Amount exceeds ATM Withdrawal limit');
-        RETURN -1;
+        RETURN 'Amount exceeds ATM Withdrawal limit';
     ELSE
         SELECT Five_HUNDRED, One_THOUSAND, Five_THOUSAND INTO v_F_hund, v_thousnd, v_F_thousand
         FROM ATM_WITHDRAWAL;
-        MOD()
-        LOOP
-            
-            IF p_in_amt > 5000  THEN    ------In progress
-            
-            ELSIF p_in_amt = 5000 THEN 
-            
-            ELSIF p_in_amt = 1000 THEN
-                THEN
-            END IF;
-            EXIT WHEN ;
-        END LOOP;
+        --v_qou := v_p_in_amt / 500; 
+        --v_rem := MOD(p_in_amt, 5000);
+        v_inp := p_in_amt;  
         
+        LOOP
+            IF v_inp >= 5000  THEN    ------In progress
+                v_inp := v_inp - 5000;
+                count_f_thousand := count_f_thousand + 1;
+            ELSIF v_inp >= 1000 THEN
+                v_inp := v_inp - 1000;
+                count_thousand := count_thousand + 1;
+            ELSIF v_inp = 500 THEN
+                v_inp := v_inp - 500;
+                count_f_hund := count_f_hund + 1;
+            END IF;
+            
+            EXIT WHEN v_inp = 0;
+            
+        END LOOP;
     END IF;
+    RETURN 'Notes withdrawn for amount : ' || p_in_amt || 'are ;
+            5000 : ' || count_f_thousand || CHR(10) || '1000 : ' || count_thousand 
+            || CHR(10) || '500 : ' || count_f_hund;
 END;
 /
+
 
 
 SELECT 45 + 90 + 90 FROM DUAL;
