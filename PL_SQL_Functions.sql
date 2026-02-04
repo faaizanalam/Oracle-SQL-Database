@@ -157,7 +157,8 @@ BEGIN
         
         LOOP
             IF v_inp >= 5000  THEN    ------In progress
-                v_inp := v_inp - 5000;
+                v_inp := v_inp - 5000
+                ;
                 count_f_thousand := count_f_thousand + 1;
             ELSIF v_inp >= 1000 THEN
                 v_inp := v_inp - 1000;
@@ -177,10 +178,96 @@ BEGIN
 END;
 /
 
-
-
 SELECT 45 + 90 + 90 FROM DUAL;
 
 
 SELECT TRUNC(14000/5000) FROM DUAL;
 SELECT MOD(15000, 5000) FROM DUAL;
+
+
+DECLARE
+v_var VARCHAR2(500);
+BEGIN
+    
+    DBMS_OUTPUT.PUT_LINE(FUNC_ATM(9000));
+    
+END;
+/
+----------------------------------------******************-----------------------------------------
+SET SERVEROUT ON;
+
+
+CREATE OR REPLACE FUNCTION FUNC_OUT(num_in IN NUMBER, num_out OUT NUMBER) RETURN VARCHAR2
+IS 
+ num NUMBER := 10;
+BEGIN
+        num_out :=  num_in * num;     
+    RETURN 'Multipling ' || num_in || ' by ' || num;
+    
+END;
+/
+
+CREATE OR REPLACE FUNCTION FUNC_OUTER(num_in IN NUMBER) RETURN NUMBER
+IS 
+ num NUMBER := 10;
+BEGIN
+        RETURN num_in * num;     
+    
+END;
+/
+
+DECLARE
+    V_VAR NUMBER;
+    v_into NUMBER;
+BEGIN
+    SELECT FUNC_OUT(10, V_VAR) INTO v_into FROM DUAL;
+END;
+/
+
+
+SELECT FUNC_OUTER(10) FROM DUAL;
+
+DECLARE
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(FUNC_OUTER(10));
+END;
+/
+
+SET SERVEROUTPUT ON;
+
+SELECT FUNC_OUTER(10) * 10 FROM DUAL;
+SELECT FUNC_OUT(10) * 10 FROM DUAL;
+
+
+CREATE OR REPLACE FUNCTION FUNC_INOUT(num_in IN OUT NUMBER) RETURN NUMBER
+IS 
+ num NUMBER := 10;
+BEGIN
+        RETURN num_in * num;     
+    
+END;
+/
+
+
+DECLARE
+    num NUMBER := 90;
+BEGIN
+
+    --SELECT FUNC_INOUT(10, num) * 10 INTO num FROM DUAL;
+    DBMS_OUTPUT.PUT_LINE(FUNC_INOUT(num));
+    SELECT FUNC_INOUT(num) * 10 INTO num FROM DUAL;
+END;
+/
+
+
+----Function with OUT / IN/OUT parameters cannot be used in SQL - DQL Queries.
+DECLARE
+    SAL NUMBER;
+BEGIN
+
+SELECT EMPLOYEE_ID INTO SAL FROM EMPLOYEES ------Function with OUT parameters cannot be used in SQL.
+WHERE SALARY > FUNC_OUT(90, SAL)
+FETCH FIRST 1 ROWS ONLY;
+
+END;
+/

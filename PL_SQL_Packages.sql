@@ -1,0 +1,12 @@
+--Create utility package to have three different procedures in it;
+----All the variables should be public.
+----One procedure should output the second highest salary and emp_id of the department given.
+----One function to return Y/N if the salary of the employee is greater than the average salary of all the employees of his/her
+----department.
+----One Procedure to log the logs entry.
+----Third procedure should update the department_id of the second highest employee  of the department of the given employee to input
+----department id.
+----Call the first procedure and second procedure in it to fetch the employee/department details and log it in the logs table as per
+----convinience 
+----Call different procedures of the package in anonymous block and try to use the intialization method and access the variable.
+
