@@ -423,9 +423,11 @@ END;
 ------------------------------------------***********************-------------------------------------------
 -------------------------------------------*********************--------------------------------------------
 
+
 SELECT INSTR('HELLO-WORLD', '-', 1) FROM DUAL;
 
 SELECT SUBSTR('HELLO-WORLD', (SELECT INSTR('HELLO-WORLD', '-', 1) FROM DUAL) + 1) FROM DUAL;
+
 SELECT SUBSTR('HELLO-WORLD', 1, (SELECT INSTR('HELLO-WORLD', '-', 1) FROM DUAL) - 1) FROM DUAL;
 
 
