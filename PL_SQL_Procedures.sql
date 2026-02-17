@@ -424,12 +424,12 @@ END;
 -------------------------------------------*********************--------------------------------------------
 
 SELECT * FROM DUAL;
-SELECT INSTR('HELLO-WORLD', '-', 1) FROM DUAL;
+
+SELECT * FROM DUAL;
+SELECT INSTRLO-WORLD', '-', 1) FROM DUAL;
 
 SELECT SUBSTR('HELLO-WORLD', (SELECT INSTR('HELLO-WORLD', '-', 1) FROM DUAL) + 1) FROM DUAL;
 S
 SELECT SUBSTR('HELLO-WORLD', 1, (SELECT INSTR('HELLO-WORLD', '-', 1) FROM DUAL) - 1) FROM DUAL;
 S
-
-
-
+SELECT * FROM EMPLOYEES_FAIZAN;
