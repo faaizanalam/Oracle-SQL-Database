@@ -358,6 +358,8 @@ BEGIN
     SELECT Dept_id INTO v_dept FROM DEPARTMENTSS 
     WHERE INITCAP(DEPT_NAME) = INITCAP(P_in_dept_name);
     
+    
+    
     CASE
         WHEN v_hyphen = 0 THEN
             DBMS_OUTPUT.PUT_lINE('NO HYPHEN FOUND');
