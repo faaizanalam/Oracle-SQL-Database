@@ -157,8 +157,286 @@ BEGIN
    
 END;
 /
-proc_logs
-proc_out_emp
-proc_out_emp
 
 SET SERVEROUT ON;
+
+----------------------------------------------Package Assignment--------------------------------------------
+--Create a package with 4 procedures in it to perform CRUD operations.
+--Create two functions in it.
+
+--Function to fetch the Rank of the employee in terms of the salary.(inp parameters emp_id) (out parameters should be rank employees with more salary than input salary)
+--  -1 if there is any error.
+--Function to fetch the number of employees in the department by name.
+
+
+CREATE OR REPLACE PACKAGE PKG_WRK_CRUD
+AS
+    PROCEDURE PROC_CREATE(
+    EID IN NUMBER,
+    F_NAME IN VARCHAR2,
+    L_NAME IN VARCHAR2,
+    DEPT_ID IN VARCHAR2,
+    SALARY IN NUMBER,
+    V_OUT_CODE OUT NUMBER,
+    V_OUT_MESSAGE OUT VARCHAR2
+    );
+    
+    PROCEDURE PROC_READ(
+    E_ID IN NUMBER,
+    V_OUT_CODE OUT NUMBER,
+    V_OUT_MESSAGE OUT VARCHAR2
+    );
+    
+    PROCEDURE PROC_UPDATE(
+    EID IN NUMBER,
+    SALARY_IN IN NUMBER,
+    V_OUT_CODE OUT NUMBER,
+    V_OUT_MESSAGE OUT VARCHAR2
+    );
+    
+    PROCEDURE PROC_DELETE(
+    EID IN NUMBER,
+    V_OUT_CODE OUT NUMBER,
+    V_OUT_MESSAGE OUT VARCHAR2
+    );
+    
+    FUNCTION FUNC_RANK(
+    EID IN NUMBER
+    ) RETURN VARCHAR2;
+    
+    FUNCTION FUNC_E_DEPT(
+    EID IN NUMBER
+    ) RETURN VARCHAR2;
+    
+    FUNCTION FUNC_STR_DELIMIT(
+    STR IN VARCHAR2,
+    DLMT IN VARCHAR2
+    ) RETURN VARCHAR2;
+    
+END PKG_WRK_CRUD;
+/
+
+
+CREATE OR REPLACE PACKAGE BODY PKG_WRK_CRUD
+AS
+    PROCEDURE PROC_CREATE(
+    EID IN NUMBER,
+    F_NAME IN VARCHAR2,
+    L_NAME IN VARCHAR2,
+    DEPT_ID IN VARCHAR2,
+    SALARY IN NUMBER,
+    V_OUT_CODE OUT NUMBER,
+    V_OUT_MESSAGE OUT VARCHAR2
+    )
+    AS
+    counter NUMBER;
+    exep_not_ext EXCEPTION;
+    
+    PRAGMA EXCEPTION_INIT(exep_not_ext, -200005);
+    BEGIN
+        SELECT COUNT(*) INTO counter FROM EMPLOYEES_FAIZAN
+        WHERE EMPLOYEE_ID = EID;
+        
+        IF counter > 0 THEN
+            RAISE exep_not_ext;
+        ELSE
+            INSERT INTO EMPLOYEES_FAIZAN(EMPLOYEE_ID, FIRST_NAME, LAST_NAME, DEPARTMENT_ID, SALARY)
+            VALUES(EID, F_NAME, L_NAME, DEPT_ID, SALARY);
+            
+            V_OUT_CODE := 1;
+            V_OUT_MESSAGE := 'Record Inserted';
+        END IF;
+    
+    EXCEPTION
+        WHEN exep_not_ext THEN
+            V_OUT_CODE := -1;
+            V_OUT_MESSAGE := 'Employee already exists, record not inserted';
+    
+    END PROC_CREATE;
+    
+    PROCEDURE PROC_READ(
+    E_ID IN NUMBER,
+    V_OUT_CODE OUT NUMBER,
+    V_OUT_MESSAGE OUT VARCHAR2
+    )
+    AS
+    rec_empl EMPLOYEES_FAIZAN%ROWTYPE;
+    counter NUMBER;
+    exep_not_ext EXCEPTION;
+    PRAGMA EXCEPTION_INIT(exep_not_ext, -200005);
+    
+    BEGIN
+        SELECT COUNT(*) INTO counter FROM EMPLOYEES_FAIZAN
+        WHERE EMPLOYEE_ID = EID;
+        
+        IF counter = 0 THEN
+            RAISE exep_not_ext;
+        ELSE
+            SELECT * INTO rec_empl FROM EMPLOYEES_FAIZAN
+            WHERE EMPLOYEE_ID = EID;
+            
+            DBMS_OUTPUT.PUT_LINE('Employee id : ' || rec_empl.EMPLOYEE_ID);
+            DBMS_OUTPUT.PUT_LINE('Employee First Name : ' ||rec_empl.FIRST_NAME);
+            DBMS_OUTPUT.PUT_LINE('Employee Last Name : ' ||rec_empl.LAST_NAME);
+            DBMS_OUTPUT.PUT_LINE('Employee Department id : ' ||rec_empl.DEPARTMENT_ID);
+            DBMS_OUTPUT.PUT_LINE('Employee Salary : ' ||rec_empl.SALARY);
+            
+            V_OUT_CODE := 1;
+            V_OUT_MESSAGE := 'Record Fetched';
+        END IF;
+    EXCEPTION 
+        WHEN exep_not_ext THEN
+            V_OUT_CODE := -1;
+            V_OUT_MESSAGE := 'Employee does not exist';
+    
+    END PROC_READ;
+    
+    PROCEDURE PROC_UPDATE(
+    EID IN NUMBER,
+    SALARY_IN IN NUMBER,
+    V_OUT_CODE OUT NUMBER,
+    V_OUT_MESSAGE OUT VARCHAR2
+    )
+    AS
+    
+    BEGIN
+    SELECT COUNT(*) INTO counter FROM EMPLOYEES_FAIZAN
+        WHERE EMPLOYEE_ID = EID;
+        
+     IF counter = 0 THEN
+            RAISE exep_not_ext;
+        ELSE
+            UPDATE EMPLOYEES_FAIZAN
+            SET SALARY = SALARY_IN;
+            
+            V_OUT_CODE := 1;
+            V_OUT_MESSAGE := 'Record Updated';
+        END IF;   
+    EXCEPTION 
+        WHEN exep_not_ext THEN
+            V_OUT_CODE := -1;
+            V_OUT_MESSAGE := 'Record does not exist';
+    
+    END PROC_UPDATE;
+    
+    PROCEDURE PROC_DELETE(
+    EID IN NUMBER,
+    V_OUT_CODE OUT NUMBER,
+    V_OUT_MESSAGE OUT VARCHAR2
+    )
+    AS
+    
+    BEGIN
+    SELECT COUNT(*) INTO counter FROM EMPLOYEES_FAIZAN
+        WHERE EMPLOYEE_ID = EID;
+        
+        IF counter = 0 THEN
+            RAISE exep_not_ext;
+        ELSE
+            DELETE FROM EMPLOYEES_FAIZAN
+            WHERE EMPLOYEE_ID = EID;
+            
+            V_OUT_CODE := 1;
+            V_OUT_MESSAGE := 'Record Deleted';
+        END IF;
+    EXCEPTION
+        WHEN exep_not_ext THEN
+            V_OUT_CODE := -1;
+            V_OUT_MESSAGE := 'Employee does not exist';
+    END PROC_DELETE;
+    
+    
+    FUNCTION FUNC_RANK(
+    EID IN NUMBER
+    ) RETURN VARCHAR2
+    IS 
+    counter NUMBER;
+    rank_emp NUMBER;
+    emp_sal EMPLOYEES_FAIZAN.SALARY%TYPE;
+    
+    BEGIN
+        SELECT COUNT(*) INTO counter FROM EMPLOYEES_FAIZAN
+            WHERE EMPLOYEE_ID = EID;
+            
+            IF counter = 0 THEN
+                RAISE exep_not_ext;
+            ELSE
+                SELECT SALARY INTO emp_sal FROM EMPLOYEES_FAIZAN
+                WHERE EMPLOYEE_ID = EID;
+                
+                SELECT RANK(emp_sal) WITHIN GROUP (ORDER BY salary DESC) AS hypothetical_rank 
+                INTO rank_emp FROM employees;
+                
+               RETURN 'EMPLOYEE : ' || emp_sal || ' RANK : ' || rank_emp;
+            END IF;
+    
+    EXCEPTION
+        WHEN exep_not_ext THEN
+            RETURN 'EMPLOYEE WITH ID : ' || EID || ' DOES NOT EXIST'; 
+    
+    END FUNC_RANK;
+    
+    
+    FUNCTION FUNC_E_DEPT(
+    EID IN NUMBER
+    ) RETURN VARCHAR2
+    IS
+    counter NUMBER;
+    e_dept EMPLOYEES_FAIZAN.DEPARTMENT_ID%TYPE;
+    e_count NUMBER;
+    BEGIN
+        SELECT COUNT(*) INTO counter FROM EMPLOYEES_FAIZAN
+            WHERE EMPLOYEE_ID = EID;
+            
+            IF counter = 0 THEN
+                RAISE exep_not_ext;
+            ELSE
+                SELECT DEPARTMENT_ID INTO e_dept FROM EMPLOYEES_FAIZAN
+                WHERE EMPLOYEE_ID = EID;
+                
+                SELECT COUNT(*) INTO e_count FROM EMPLOYEES_FAIZAN
+                WHERE DEPARTMENT_ID = e_dept;
+                
+               RETURN ' EMPLOYEES DEPT : ' || e_dept || ' HAS TOTAL  : ' || e_count || ' EMPLOYEES';
+            END IF;
+    
+    EXCEPTION
+        WHEN exep_not_ext THEN
+            RETURN 'EMPLOYEE WITH ID : ' || EID || ' DOES NOT EXIST'; 
+            
+    END FUNC_E_DEPT;
+
+    FUNCTION FUNC_STR_DELIMIT(
+    STR IN VARCHAR2,
+    DLMT IN VARCHAR2
+    ) RETURN VARCHAR2
+    IS 
+    str_length VARCHAR2(500);
+    s_del VARCHAR2(10) := DLMT; 
+    s_start NUMBER := 0;
+    s_end NUMBER := 0;
+    str_in VARCHAR2(400) := STR;
+    BEGIN
+    str_length := LENGTH(STR);
+    
+        IF str_length > 0 THEN
+            str_end := INSTR(STR, s_del);
+            IF str_end = 0 THEN
+               RETURN 'NO DELIMETER PRESENT IN THE STRING'; 
+            ELSE
+                LOOP
+                    s_end := INSTR(str_in, s_del);
+                
+                    s_substr := SUBSTR(str_in, s_start + 1, s_end - 1);  --Because index in SUBSTR starts from 1 and in INSTR starts from 1.
+                    DBMS_OUTPUT.PUT_LINE('SUBSTRING : ' || s_substr);
+            
+                    str_in := SUBSTR(str_in, s_start + 1);
+               END LOOP;
+            END IF;
+        ELSE
+        RETURN 'STRING IS EMPTY'; 
+        END IF;
+    
+    END FUNC_STR_DELIMIT;
+END PKG_WRK_CRUD;
+/
