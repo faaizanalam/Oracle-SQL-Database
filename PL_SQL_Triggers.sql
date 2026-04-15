@@ -214,3 +214,73 @@ ALTER TRIGGER TRG_DEPT_DEF_EMP_BI DISABLE;
 DROP TRIGGER TRG_EMP_FZN;
 
 -----------------------------------------------------------------------------------------------------------------------
+--------------------------------------Statement Level Triggers---------------------------------------------------------
+--Create a statement level trigger to prevent anyone from deleting any of the departments.
+CREATE OR REPLACE TRIGGER TRG_DEPT_B_DLT
+BEFORE DELETE ON DEPT_TRG
+BEGIN
+    RAISE_APPLICATION_ERROR(-20004, 'Trigger prevents delete in DEPARTMENT table');
+
+END;
+/
+
+DELETE FROM DEPT_TRG;
+-----------------------------------------------------------------------------------------------------------------------
+--Create a statement level trigger to prevent update employees salary between 1-15 of the month.
+CREATE OR REPLACE TRIGGER TRG_EMP_SAL_BUD
+BEFORE UPDATE ON EMP_TRG
+DECLARE
+    v_day NUMBER(3);
+BEGIN
+    SELECT EXTRACT(DAY FROM SYSDATE) INTO v_day FROM DUAL;    
+    IF v_day BETWEEN 1 AND 15 THEN
+        RAISE_APPLICATION_ERROR(-20033, 'CANNOT UPDATE SALARY ON ' || v_day || ' OF THE MONTH.');
+    END IF;
+    
+END;
+/
+
+UPDATE EMP_TRG
+SET SALARY = 30000
+WHERE EMPLOYEE_ID = 501;
+
+SELECT * FROM EMP_TRG
+WHERE EMPLOYEE_ID BETWEEN 100 AND 160;
+
+SELECT EXTRACT(DAY FROM SYSDATE) FROM DUAL;
+
+-----------------------------------------------------------------------------------------------------------------------
+--Create a statement level trigger on employees table to allow update on employees only if less than 3 department are Active.
+----and log entry when employees data are updated, which will be useful to create the report on the employees data update frequency.
+CREATE OR REPLACE TRIGGER TRG_EMP_UPT_DEPT_ACTIVE
+BEFORE UPDATE ON EMP_TRG
+DECLARE
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count FROM DEPT_TRG
+    WHERE STATUS = 'Active';
+    
+    IF v_count > 3 THEN
+        RAISE_APPLICATION_ERROR(-20093, 'Cannot update when number of Active department is : ' || v_count);
+    END IF;
+END;
+/
+
+UPDATE EMP_TRG
+SET SALARY = 55000
+WHERE EMPLOYEE_ID = 108;
+
+SELECT * FROM DEPT_TRG;
+
+-----------------------------------------------------------------------------------------------------------------------
+--Disable all the triggers created in this assignment.
+
+ALTER TRIGGER TRG_EMP_UPT_DEPT_ACTIVE DISABLE;
+ALTER TRIGGER TRG_EMP_SAL_BUD DISABLE; 
+ALTER TRIGGER TRG_DEPT_B_DLT DISABLE;
+
+
+
+
+
+
