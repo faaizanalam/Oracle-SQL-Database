@@ -279,6 +279,24 @@ ALTER TRIGGER TRG_EMP_UPT_DEPT_ACTIVE DISABLE;
 ALTER TRIGGER TRG_EMP_SAL_BUD DISABLE; 
 ALTER TRIGGER TRG_DEPT_B_DLT DISABLE;
 
+------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------Compund Triggers-----------------------------------------------------------
+--Create a Compound Trigger on Employees table to log details into assignment_logs table for each type of triggers.
+---- AFTER Statment --> Log total number of active departments into logs table.
+---- For row level triggers --> Log entry into logs table for oold and new salary and manager last name if changed.
+--                              Log all the column values in case employee data is inserted/deleted.
+--  Use global variable to update th value with trigger type(BS, AS, BER, AER) in each trigger level body and print it in the after statement trigger.
+-- Disable all the triggers created in this assignment.
+
+
+
+
+
+
+
+
+
+
 
 
 
