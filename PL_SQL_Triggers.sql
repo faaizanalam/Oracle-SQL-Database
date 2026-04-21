@@ -283,22 +283,153 @@ ALTER TRIGGER TRG_DEPT_B_DLT DISABLE;
 ---------------------------------------------Compund Triggers-----------------------------------------------------------
 --Create a Compound Trigger on Employees table to log details into assignment_logs table for each type of triggers.
 ---- AFTER Statment --> Log total number of active departments into logs table.
----- For row level triggers --> Log entry into logs table for oold and new salary and manager last name if changed.
+---- For row level triggers --> Log entry into logs table for old and new salary and Department name if changed.
 --                              Log all the column values in case employee data is inserted/deleted.
 --  Use global variable to update th value with trigger type(BS, AS, BER, AER) in each trigger level body and print it in the after statement trigger.
 -- Disable all the triggers created in this assignment.
 
+CREATE OR REPLACE TRIGGER TRG_CMD_EMP
+FOR UPDATE OR INSERT OR DELETE ON EMP_TRG
+COMPOUND TRIGGER
+    v_count NUMBER;
+    v_trg VARCHAR2(100);
+
+BEFORE EACH ROW IS
+BEGIN
+
+    INSERT INTO TAB_PROC_LOG VALUES(SEQ_TAB_PROC_LOG.NEXTVAL, SYSTIMESTAMP, 'Entered in Before Each Row Trigger');
+
+    IF UPDATING THEN
+        IF :old.department_id = :new.department_id THEN 
+            INSERT INTO TAB_PROC_LOG VALUES(SEQ_TAB_PROC_LOG.NEXTVAL, SYSTIMESTAMP, 'Old Salary : ' || :old.SALARY 
+            || ' New Salary : ' || :new.SALARY);
+        ELSE
+            INSERT INTO TAB_PROC_LOG VALUES(SEQ_TAB_PROC_LOG.NEXTVAL, SYSTIMESTAMP, 'Old Salary : ' || :old.SALARY 
+            || ' New Salary : ' || :new.SALARY || ' Old Dept : ' || :old.DEPARTMENT_ID || ' New Dept : ' || :new.DEPARTMENT_ID);
+        END IF;
+
+    ELSIF DELETING THEN
+        INSERT INTO TAB_PROC_LOG VALUES(SEQ_TAB_PROC_LOG.NEXTVAL, SYSTIMESTAMP, 'Employee ID : ' || :old.EMPLOYEE_ID || ' First Name : '
+        || :old.FIRST_NAME || ' Last Name : ' || :old.LAST_NAME || ' Department ID : ' || :old.DEPARTMENT_ID || 'Salary : ' || :old.SALARY);
+
+    ELSIF INSERTING THEN
+        INSERT INTO TAB_PROC_LOG VALUES(SEQ_TAB_PROC_LOG.NEXTVAL, SYSTIMESTAMP, 'Employee ID : ' || :new.EMPLOYEE_ID || ' First Name : '
+        || :new.FIRST_NAME || ' Last Name : ' || :new.LAST_NAME || ' Department ID : ' || :new.DEPARTMENT_ID || 'Salary : ' || :new.SALARY);
+
+    END IF;
+
+    v_trg := ' Trigger type : BEFORE EACH ROW';
+END BEFORE EACH ROW;
+
+
+BEFORE STATEMENT IS
+BEGIN
+    INSERT INTO TAB_PROC_LOG VALUES(SEQ_TAB_PROC_LOG.NEXTVAL, SYSTIMESTAMP, 'Entered in Before Statement Trigger');
+    v_trg := ' Trigger type : BEFORE EACH ROW';
+END BEFORE STATEMENT;
+
+
+AFTER EACH ROW IS
+BEGIN
+    INSERT INTO TAB_PROC_LOG VALUES(SEQ_TAB_PROC_LOG.NEXTVAL, SYSTIMESTAMP, 'Entered in After Each Row Trigger');
+    v_trg := ' Trigger type : BEFORE EACH ROW';
+END AFTER EACH ROW;
+
+
+AFTER STATEMENT IS
+BEGIN
+    INSERT INTO TAB_PROC_LOG VALUES(SEQ_TAB_PROC_LOG.NEXTVAL, SYSTIMESTAMP, 'Entered in After Statement Trigger');
+
+    SELECT COUNT(*) INTO v_count FROM DEPT_TRG
+    WHERE STATUS = 'Active';
+
+    DBMS_OUTPUT.PUT_LINE(v_trg);
+END AFTER STATEMENT;
+
+END TRG_CMD_EMP;
+/
+
+ALTER TRIGGER TRG_CMD_EMP DISABLE;
+
+-------------------------------------------------------------------------------------------------------------------
+-----------------------------------------------------Assignment Employees-------------------------------------------
+--Create the update trigger on employees table to print the value updated by the SQL.
+CREATE OR REPLACE TRIGGER TRG_EMP_UPD_BER
+BEFORE UPDATE ON EMP_TRG
+FOR EACH ROW 
+BEGIN
+    IF :new.employee_id <> :old.employee_id THEN
+        DBMS_OUTPUT.PUT_LINE('>>Old Employee ID : ' || :old.employee_id || ' >>New Employee ID : ' || :new.employee_id);
+    END IF; 
+    
+    IF :new.First_name <> :old.First_name THEN
+        DBMS_OUTPUT.PUT_LINE('>>Old First Name : ' || :old.First_name || ' >>New First Name : ' || :new.First_name);
+    END IF; 
+    
+    IF :new.Last_name <> :old.Last_name THEN
+        DBMS_OUTPUT.PUT_LINE('>>Old Last Name : ' || :old.Last_name || ' >>New Last Name : ' || :new.Last_name);
+    END IF; 
+    
+    IF :new.Department_id <> :old.Department_id THEN
+        DBMS_OUTPUT.PUT_LINE('>>Old Department Id : ' || :old.Department_id || ' >>New Department Id : ' || :new.Department_id);
+    END IF; 
+    
+    IF :new.Salary <> :old.Salary THEN
+        DBMS_OUTPUT.PUT_LINE('>>Old Salary : ' || :old.Salary || ' >>New Salary : ' || :new.Salary);
+    END IF;
+END TRG_EMP_UPD_BER;
+/
+
+ALTER TRIGGER TRG_EMP_UPD_BER DISABLE;
+
+-----------------------------------------------------Assignment Department-------------------------------------------
+--Disable all triggers on a table.
+--Create a Coumpound Trigger on departments table to print before and after values of the data updated by the SQL.
+--Statemtent level trigger should also be utilized to print the time to execute the SQL statement.
+
+ALTER TABLE DEPT_TRG DISABLE ALL TRIGGERS;
+
+CREATE OR REPLACE TRIGGER TRG_DEPT_UP
+FOR UPDATE ON DEPT_TRG
+COMPOUND TRIGGER
+BEFORE STATEMENT IS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Execution time of Before Statement Trigger : ' || SYSTIMESTAMP);
+
+END BEFORE STATEMENT;
+
+BEFORE EACH ROW IS 
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Values before updation');
+    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Dept ID ; ' || :old.dept_id);
+    DBMS_OUTPUT.PUT_LINE('Dept Name ; ' || :old.dept_name);
+    DBMS_OUTPUT.PUT_LINE('Location ; ' || :old.location);
+    DBMS_OUTPUT.PUT_LINE('Status ; ' || :old.status);
+END BEFORE EACH ROW;
+
+AFTER STATEMENT IS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Execution time of After Statement Trigger : ' || SYSTIMESTAMP);
+END AFTER STATEMENT;
+
+AFTER EACH ROW IS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Values after updation');
+    DBMS_OUTPUT.PUT_LINE('-------------------------------------------------------------');
+    DBMS_OUTPUT.PUT_LINE('Dept ID ; ' || :new.dept_id);
+    DBMS_OUTPUT.PUT_LINE('Dept Name ; ' || :new.dept_name);
+    DBMS_OUTPUT.PUT_LINE('Location ; ' || :new.location);
+    DBMS_OUTPUT.PUT_LINE('Status ; ' || :new.status);
+
+END AFTER EACH ROW;
+
+END TRG_DEPT_UP;
+/
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+SELECT * FROM DEPT_TRG;
