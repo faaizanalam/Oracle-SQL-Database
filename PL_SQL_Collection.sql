@@ -3,6 +3,7 @@
 --Create associative array to store all the departments and its city into it.
 ----Delete the city from the associative array for inactive department.
 ----Access each elements of the associative array and print the depatment_id --> City.
+SET SERVEROUT ON;
 DECLARE
 --    TYPE AA_DEPT_LOCATION IS TABLE OF VARCHAR2(60) Error : Due to missing index, it was implicitly considered as a nested table, nested tables use number as index by default and trying to index it using 'dept_name' was generating a numeric to string conversion error!!
     TYPE AA_DEPT_LOCATION IS TABLE OF VARCHAR2(60) INDEX BY VARCHAR2(60);
@@ -46,20 +47,65 @@ BEGIN
 END;
 /
 
---Create associative array to store the department id for each employees. emp_id --> manager_name
-----store department of all the employees of department HR.
-----delete the manager if the salary of his/her is less than 5000 and print the details.
+--Create associative array to store the department name for each employees. emp_id --> department_name
+----Print all the employees of department HR.
+----delete the department if its budget is less than 100000 and print the details.
+DECLARE
+    TYPE AA_EMP_DEPT_ID IS TABLE OF VARCHAR2 INDEX BY PLS_NUMBER; 
+    V_AA_EMP_DEPT_ID AA_EMP_DEPT_ID;
+    
+    CURSOR cur_aa_emp_dept_id IS 
+        SELECT e.employee_id, d.dept_name FROM EMP_TRG E
+        JOIN DEPT_TRG D ON e.department_id = d.dept_id;
+    idx PLS_INTEGER;
+BEGIN
+    FOR rec in cur_aa_emp_dept_id
+    LOOP
+        V_AA_EMP_DEPT_ID(i.employee_id) := i.dept_name;
+    END LOOP;
+    
+    ------------------------------------------------------
+    idx := V_AA_EMP_DEPT_ID.FIRST;
+    WHILE idx IS NOT NULL
+    LOOP
+        IF V_AA_EMP_DEPT_ID(idx) = 'Human Resources' THEN
+            DBMS_OUTPUT.PUT_LINE( idx || '>>>>>>>>>>>' || V_AA_EMP_DEPT_ID(idx));
+        END IF;
+        idx := V_AA_EMP_DEPT_ID.NEXT(idx);    
+    END LOOP;
+    
+    ----------------------------------------------------
+    idx := V_AA_EMP_DEPT_ID.FIRST;
+    FOR i IN (SELECT DEPT_NAME FROM EMP_TRG E
+        JOIN DEPT_TRG D ON e.department_id = d.dept_id
+        GROUP BY DEPT_NAME
+        HAVING SUM(SALARY) < 100000)
+    LOOP
+        FOR j IN V_AA_EMP_DEPT_ID
+        LOOP
+            IF V_AA_EMP_DEPT_ID(j.employee_id) = i THEN
+                V_AA_EMP_DEPT_ID.DELETE(j);
+            END IF;
+        END LOOP;
+        
+    END LOOP;
+END;
+/
 
 
 
-SET SERVEROUT ON;
+SELECT DEPT_NAME FROM EMP_TRG E
+JOIN DEPT_TRG D ON e.department_id = d.dept_id
+GROUP BY DEPT_NAME
+HAVING SUM(SALARY) < 100000;
 
 
 
 
 
+SELECT * FROM DEPT_TRG;
 
-SELECT DEPT_NAME FROM DEPT_TRG WHERE STATUS = 'Inactive';
+
 
 
 
