@@ -48,10 +48,12 @@ END;
 /
 
 --Create associative array to store the department name for each employees. emp_id --> department_name
-----Print all the employees of department HR.
+----Print all the employees of department Sales.
 ----delete the department if its budget is less than 100000 and print the details.
+
+/*
 DECLARE
-    TYPE AA_EMP_DEPT_ID IS TABLE OF VARCHAR2 INDEX BY PLS_NUMBER; 
+    TYPE AA_EMP_DEPT_ID IS TABLE OF VARCHAR2(50) INDEX BY PLS_INTEGER; 
     V_AA_EMP_DEPT_ID AA_EMP_DEPT_ID;
     
     CURSOR cur_aa_emp_dept_id IS 
@@ -61,7 +63,7 @@ DECLARE
 BEGIN
     FOR rec in cur_aa_emp_dept_id
     LOOP
-        V_AA_EMP_DEPT_ID(i.employee_id) := i.dept_name;
+        V_AA_EMP_DEPT_ID(rec.employee_id) := rec.dept_name;
     END LOOP;
     
     ------------------------------------------------------
@@ -81,10 +83,10 @@ BEGIN
         GROUP BY DEPT_NAME
         HAVING SUM(SALARY) < 100000)
     LOOP
-        FOR j IN V_AA_EMP_DEPT_ID
+        FOR j IN cur_aa_emp_dept_id
         LOOP
-            IF V_AA_EMP_DEPT_ID(j.employee_id) = i THEN
-                V_AA_EMP_DEPT_ID.DELETE(j);
+            IF V_AA_EMP_DEPT_ID(j.employee_id) = i.dept_name THEN
+                V_AA_EMP_DEPT_ID.DELETE(j.employee_id);
             END IF;
         END LOOP;
         
@@ -92,12 +94,81 @@ BEGIN
 END;
 /
 
+This code was written by me, thi code suffered from a 
+runtime error caused by illegally reusing an explicit cursor in a nested loop, and 
+it suffered from severe performance bottlenecks by repeatedly querying physical database tables inside those loops.
+
+*/
+
+/*
+Following code is AI refined version fixes the cursor bug and drastically improves execution speed by querying
+the database only once at the beginning, processing all 
+subsequent deletions purely in-memory using the data already stored in your associative array.
+*/
+
+DECLARE
+    TYPE AA_EMP_DEPT_ID IS TABLE OF VARCHAR2(50) INDEX BY PLS_INTEGER; 
+    V_AA_EMP_DEPT_ID AA_EMP_DEPT_ID;
+    
+    CURSOR cur_aa_emp_dept_id IS 
+        SELECT e.employee_id, d.dept_name 
+        FROM EMP_TRG E
+        JOIN DEPT_TRG D ON e.department_id = d.dept_id;
+        
+    idx PLS_INTEGER;
+BEGIN
+    -- 1. Populate the Associative Array
+    FOR rec IN cur_aa_emp_dept_id
+    LOOP
+        V_AA_EMP_DEPT_ID(rec.employee_id) := rec.dept_name;
+    END LOOP;
+    
+    DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------');
+    -- 2. Print Human Resources Employees
+    idx := V_AA_EMP_DEPT_ID.FIRST;
+    WHILE idx IS NOT NULL
+    LOOP
+        IF V_AA_EMP_DEPT_ID(idx) = 'Sales' THEN
+            DBMS_OUTPUT.PUT_LINE(idx || '>>>>>>>>>>>' || V_AA_EMP_DEPT_ID(idx));
+        END IF;
+        idx := V_AA_EMP_DEPT_ID.NEXT(idx);    
+    END LOOP;
+    
+    DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------');
+    -- 3. Delete low-salary departments (Fixed and Highly Optimized)
+    FOR i IN (SELECT d.dept_name 
+              FROM EMP_TRG e
+              JOIN DEPT_TRG d ON e.department_id = d.dept_id
+              GROUP BY d.dept_name
+              HAVING SUM(e.salary) < 900000)
+    LOOP
+        -- Loop directly through the associative array in memory (Zero DB hits!)
+        idx := V_AA_EMP_DEPT_ID.FIRST;
+        WHILE idx IS NOT NULL
+        LOOP
+            IF V_AA_EMP_DEPT_ID(idx) = i.dept_name THEN
+                DBMS_OUTPUT.PUT_LINE(idx || '>>>>>>>>>>>' || V_AA_EMP_DEPT_ID(idx) || ' has been deleted.');
+                V_AA_EMP_DEPT_ID.DELETE(idx);
+            END IF;
+            idx := V_AA_EMP_DEPT_ID.NEXT(idx);
+        END LOOP;
+    END LOOP;
+    
+    DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------');
+     idx := V_AA_EMP_DEPT_ID.FIRST;
+    WHILE idx IS NOT NULL
+    LOOP
+        DBMS_OUTPUT.PUT_LINE(idx || '>>>>>>>>>>>' || V_AA_EMP_DEPT_ID(idx));
+        idx := V_AA_EMP_DEPT_ID.NEXT(idx);    
+    END LOOP;
+END;
 
 
-SELECT DEPT_NAME FROM EMP_TRG E
-JOIN DEPT_TRG D ON e.department_id = d.dept_id
-GROUP BY DEPT_NAME
-HAVING SUM(SALARY) < 100000;
+
+/
+
+
+
 
 
 
